@@ -1,0 +1,29 @@
+<header>
+    <nav class="navbar navbar-expand-sm navbar-light shadow py-3">
+        <a href="/" class="navbar-brand">Orion</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="{% url 'hub' slug='design' %}" class="nav-link" title="Дизайн">
+                    Дизайн</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'hub' slug='webdeb' %}" class="nav-link" title="Веб-разработка">
+                    Веб-разработка</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'hub' slug='mobdev' %}" class="nav-link" title="Мобильная разработка">
+                    Мобильная разработка</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'hub' slug='marketing' %}" class="nav-link" title="Маркетинг">
+                    Маркетинг</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
