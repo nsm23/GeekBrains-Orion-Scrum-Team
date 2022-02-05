@@ -5,5 +5,5 @@ from django.conf import settings
 
 app_name = 'posts'
 urlpatterns = [
-    path('<slug:slug>/', PostDetailView.as_view(), name='post-detail'),
+    path('<slug:slug>/', PostDetailView.as_view(), name='detail'),
 ]
