@@ -6,3 +6,5 @@ class Hub(models.Model):
     alias = models.CharField(max_length=64)
     sort_order = models.IntegerField(verbose_name='порядок сортировки')
 
+    def __str__(self):
+        return self.title

@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="row row-cols-3">
+    {% for post in post_list %}
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{post.title}}</h5>
+            <p href="/hubs/{{post.hub}}">{{post.hub}}</p>
+            <p>автор: {{post.user}}</p>
+            <hr>
+            <p class="card-text">{{post.brief_text}}</p>
+            <p>{{post.created_at|date:"Y.m.d H:i"}}</p>
+            <a class="card-link" href="/posts/{{post.slug}}"></a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
