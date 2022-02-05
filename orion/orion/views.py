@@ -5,5 +5,5 @@ from posts.models import Post
 
 def main_view(request):
     post_list = Post.objects.order_by('-created_at')[:12]
-    context = {'post_list': post_list}
+    context = {'post_list': post_list, 'page_title': 'Главная'}
     return render(request, '../templates/index.html', context=context)
