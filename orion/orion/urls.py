@@ -25,7 +25,8 @@ urlpatterns = [
     path('', main_view, name='main'),
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),
-    path('posts/', include('posts.urls', namespace='posts'))
+    path('posts/', include('posts.urls', namespace='posts')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root='static/')
