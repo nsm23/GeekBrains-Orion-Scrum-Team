@@ -1,0 +1,14 @@
+{% extends "../layouts/main.html" %}
+{% block content %}
+    <h1>Страница просмотра поста</h1>
+    
+    <div class="card mb-3">
+        {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <p class="card-text">{{ post.text|linebreaks }}</p>
+          {% load humanize %}
+          <p class="card-text"><small class="text-muted">{{ post.user.username }} написал статью {% if post.hub %}в хабе {{ post.hub.title }} {% endif %}{{ post.created_at|naturaltime }}</small></p>
+        </div>
+      </div>
+{% endblock %}
