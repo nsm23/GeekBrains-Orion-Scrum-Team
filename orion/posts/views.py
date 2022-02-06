@@ -1,9 +1,6 @@
-from django import template
-from django.utils import timezone
 from django.views.generic.detail import DetailView
-from django.http import Http404
-
 from posts.models import Post
+
 
 class PostDetailView(DetailView):
 

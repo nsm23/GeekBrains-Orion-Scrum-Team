@@ -1,9 +1,14 @@
-from django.shortcuts import render
+from django.views.generic import ListView
 
 from posts.models import Post
 
 
-def main_view(request):
-    post_list = Post.objects.order_by('-created_at')[:12]
-    context = {'post_list': post_list, 'page_title': 'Главная'}
-    return render(request, '../templates/index.html', context=context)
+class MainView(ListView):
+    model = Post
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        queryset = Post.objects.all().order_by('-created_at')[:12]
+        context = super().get_context_data(object_list=queryset, **kwargs)
+        context['page_title'] = 'Главная'
+        return context
