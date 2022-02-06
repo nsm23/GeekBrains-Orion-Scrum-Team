@@ -18,11 +18,11 @@ from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
 
-from orion.views import main_view
+from orion.views import MainView
 
 
 urlpatterns = [
-    path('', main_view, name='main'),
+    path('', MainView.as_view(), name='main'),
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls', namespace='posts')),

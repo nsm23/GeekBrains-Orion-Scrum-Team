@@ -8,22 +8,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a href="{% url 'hubs:hub' slug='design' %}" class="nav-link" title="Дизайн">
-                        Дизайн</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'hubs:hub' slug='webdev' %}" class="nav-link" title="Веб-разработка">
-                        Веб-разработка</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'hubs:hub' slug='mobdev' %}" class="nav-link" title="Мобильная разработка">
-                        Мобильная разработка</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'hubs:hub' slug='marketing' %}" class="nav-link" title="Маркетинг">
-                        Маркетинг</a>
-                    </li>
+                    {% for hub in hubs %}
+                        <li class="nav-item">
+                            <a href="{% url 'hubs:hub' slug=hub.alias %}" class="nav-link" title="{{hub.title}}">
+                                {{hub.title}}
+                            </a>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
