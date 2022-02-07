@@ -10,7 +10,9 @@
                 <ul class="navbar-nav ml-auto">
                     {% for hub in hubs %}
                         <li class="nav-item">
-                            <a href="{% url 'hubs:hub' slug=hub.alias %}" class="nav-link" title="{{hub.title}}">
+                            <a  href="{% url 'hubs:hub' slug=hub.alias %}"
+                                class="nav-link {% if hub.alias == current_hub %} active {% endif %}"
+                                title="{{hub.title}}">
                                 {{hub.title}}
                             </a>
                         </li>
