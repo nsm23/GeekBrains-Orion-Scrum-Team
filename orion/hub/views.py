@@ -15,4 +15,5 @@ class HubView(ListView):
         context = super().get_context_data(object_list=queryset, **kwargs)
         hub = get_object_or_404(Hub, alias=slug)
         context['page_title'] = f'Хаб | {hub.title}'
+        context['current_hub'] = slug
         return context
