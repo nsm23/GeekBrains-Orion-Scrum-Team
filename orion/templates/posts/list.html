@@ -1,23 +1,13 @@
-<div class="row mb-4 post-list" data-masonry='{"percentPosition": true}'>
 {% for post in post_list %}
-  {% comment %} {% cycle '<div class="row mb-4 post-list" data-masonry=\'{"percentPosition": true}\'>' '' '' as div %} {% endcomment %}
-    <div class="col-sm-6 col-lg-4 mb-4">
-      <div class="card">
-        {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
-        <div class="card-body">
-          <h5 class="card-title">{{post.title}}</h5>
-          {% load humanize %}
-          <h6 class="card-subtitle mb-2 text-muted">{{ post.user.username }} написал статью {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|naturaltime }}</h6>
-          <hr>
-          <p class="card-text">{{post.brief_text}}</p>
-          <a class="card-link" href="{% url 'posts:detail' slug=post.slug %}"></a>
-        </div>
-      </div>
+  <div class="card card mb-3">
+    {% if post.image %}<img src="{{ post.image.url }}" class="img-fluid" alt="{{ post.title }}">{% endif %}
+    <div class="card-body">
+      <h5 class="card-title">{{post.title}}</h5>
+      {% load humanize %}
+      <h6 class="card-subtitle mb-2 text-muted">{{ post.user.username }} написал статью {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at }}</h6>
+      <hr>
+      <p class="card-text">{{post.brief_text}}</p>
+      <a class="card-link" href="{% url 'posts:detail' slug=post.slug %}"></a>
     </div>
-  {% endfor %}
-    {% comment %} {% cycle '' '' '</div>' as div %}
-{% endfor %}
-{% if not post_list|length|divisibleby:"3" %}
   </div>
-{% endif %} {% endcomment %}
-</div>
+{% endfor %}

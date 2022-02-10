@@ -7,7 +7,7 @@
         <div class="card-body">
           <h2 class="card-title">{{ post.title }}</h2>
           {% load humanize %}
-            <h6 class="card-subtitle mb-2 text-muted">{{ post.user.username }} написал статью {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|naturaltime }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">{{ post.user.username }} написал статью {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at }}</h6>
           <p class="card-text">{{ post.text|linebreaks }}</p>
           {% load humanize %}
         </div>
