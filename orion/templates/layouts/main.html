@@ -19,7 +19,15 @@
     {#     MAIN CONTENT     #}
     <main class="flex-shrink-0">
         <div class="container">
-            {% block content %}{% endblock %}
+            <div class="row">
+                <div class="col-9">
+                    {% block content %}{% endblock %}
+                </div>
+                <div class="col-3 sticky-top vh-100">
+                    {% comment %} <img src="{%  static '/img/orion_banner.jpg' %}" class="img-fluid" alt="..."> {% endcomment %}
+                    <h6 class="text-muted text-center">RIGHT COLUMN<h6>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -28,7 +36,7 @@
 
     {#     SCRIPTS     #}
     <script src="{%  static '/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{%  static '/js/masonry.pkgd.min.js' %}" async></script>
+    {% comment %} <script src="{%  static '/js/masonry.pkgd.min.js' %}" async></script> {% endcomment %}
 
     {% block scripts %}{% endblock %}
 </body>
