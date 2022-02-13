@@ -15,7 +15,7 @@ def user_create(request):
         user_fields = {'username': data['username'],
                        'name': data['name'],
                        'bio': data['bio'],
-                       'age': data['age'],
+                       'birth_year': data['birth_year'],
                        'avatar': data['avatar'],
                        }
         User.objects.create_user(email=data['email'], password=pass1, **user_fields)
