@@ -1,0 +1,28 @@
+{% extends 'layouts/main.html' %}
+
+{% block links %}{% endblock %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% for item in form %}
+        <p>{{item.label}} {{item}}</p>
+    {% endfor %}
+    <p></p>
+
+    <p>
+      <label for="pass1">pass1</label>
+      <input id="pass1" name="pass1" type="password" required>
+    </p>
+
+    <p>
+      <label for="pass2">pass2</label>
+      <input id="pass2" name="pass2" type="password" required>
+    </p>
+
+    <button type="submit">submit</button>
+  </form>
+{% endblock %}
+
+{% block scripts %}{% endblock %}
