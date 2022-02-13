@@ -11,6 +11,7 @@ class UserAdminConfig(UserAdmin):
         (None, {'fields': ('username',
                            'email',
                            'name',
+                           'birth_year',
                            'password',
                            'avatar',
                            'bio',

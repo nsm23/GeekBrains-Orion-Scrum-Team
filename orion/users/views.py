@@ -1,6 +1,15 @@
 from django.shortcuts import render
+from django.views.generic import DetailView
+
 from users.models import User
 from users.forms import UserForm
+
+
+class UserDetailView(DetailView):
+    model = User
+    context_object_name = 'user'
+    template_name = 'users/user_profile.html'
+    slug_field = 'username'
 
 
 def user_create(request):
@@ -19,16 +28,6 @@ def user_create(request):
                        'avatar': data['avatar'],
                        }
         User.objects.create_user(email=data['email'], password=pass1, **user_fields)
-
-    context = {'form': form}
-    return render(request, 'cabinet/index.html', context)
-
-
-def user_detail(request, user_id=0):
-    form = UserForm()
-    if request.method == 'GET':
-        user = User.objects.get(pk=user_id)
-        form = UserForm(instance=user)
 
     context = {'form': form}
     return render(request, 'cabinet/index.html', context)
