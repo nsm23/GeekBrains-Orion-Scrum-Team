@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.views.generic import DetailView, UpdateView
+from django.shortcuts import get_object_or_404
+from django.views.generic import DetailView, ListView, UpdateView
 from django.urls import reverse
 
+from posts.models import Post
 from users.models import User
 from users.forms import UserForm
 
@@ -11,6 +13,12 @@ class UserDetailView(DetailView):
     context_object_name = 'user'
     template_name = 'users/user_profile.html'
     slug_field = 'username'
+
+
+class UserPostListView(ListView):
+    model = User
+    context_object_name = 'posts'
+    template_name = 'users/user_profile_posts.html'
 
 
 class UserUpdateView(PermissionRequiredMixin, UpdateView):
