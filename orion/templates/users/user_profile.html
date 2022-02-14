@@ -2,9 +2,13 @@
 
 {% load static %}
 
+{% block title %}Личный кабинет @{{ user.username }}{% endblock %}
+
 {% block content %}
     <div class="row mb-3">
-        <h1 class="col">{{ user.name }} @{{ user.username }}</h1>
+        <h1 class="col">{{ user.name }} @{{ user.username }}
+            <a href="{%  url 'users:user_edit' pk=user.pk %}" class="btn btn-outline-secondary" title="Редактировать"><i class="bi bi-pencil"></i></a>
+        </h1>
     </div>
 
     <div class="row">
