@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
 
@@ -12,11 +13,23 @@ class UserDetailView(DetailView):
     slug_field = 'username'
 
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(PermissionRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
     template_name_suffix = '_update_form'
+    permission_required = 'users.can_update'
+    # ToDo: add url for to redirect to a login form
+    # login_url = reverse()
 
     def get_success_url(self):
         pk = self.kwargs['pk']
         return reverse('users:user_detail_pk', kwargs={'pk': pk})
+
+    def has_permission(self):
+        if self.request.user.is_anonymous:
+            return False
+        if self.request.user.pk != self.kwargs['pk'] and not self.request.user.is_superuser:
+            self.raise_exception = True
+            return False
+        return True
+
