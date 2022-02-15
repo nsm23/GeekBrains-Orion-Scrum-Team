@@ -6,46 +6,10 @@
                 <div class="col" id="post-comments">
                     {% if comments_list %}
                         {% for comment in comments_list %}
-                            <div class="d-flex flex-start{% if not forloop.first %} mt-4{% endif %}">
-                                <img class="rounded-circle shadow-1-strong me-3" src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp" alt="{{ comment.user.username }}" width="65" height="65" />
-                                <div class="flex-grow-1 flex-shrink-1">
-                                    <div id="comment-{{ comment.id }}">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <p class="mb-1">
-                                                {{ comment.user.username }} <span class="small">{{ comment.created_at }}</span>
-                                            </p>
-                                            <a href="javascript:void(0);" id="reply-to-{{ comment.id }}">
-                                                <i class="fas fa-reply fa-xs"></i>
-                                                <span class="small"> ответить</span>
-                                            </a>
-                                        </div>
-                                        <p class="small mb-0">{{ comment.text|linebreaks }}</p>
-                                    </div>
-
-                                    {% with create_comment_form=False reply_to_comment_id=comment.id %}
-                                        {% include "./form.html" %}
-                                    {% endwith %}
-
-                                    {% if comment.replies %}
-                                        {% for reply_comment in comment.replies.all %}
-                                            <div class="d-flex flex-start mt-4">
-                                                <a class="me-3" href="#">
-                                                    <img class="rounded-circle shadow-1-strong" src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(11).webp" alt="avatar" width="65"  height="65" />
-                                                </a>
-                                                <div class="flex-grow-1 flex-shrink-1">
-                                                    <div id="comment-{{ reply_comment.id }}">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <p class="mb-1">
-                                                                {{ reply_comment.user.username }} <span class="small">{{ reply_comment.created_at }}</span>
-                                                            </p>
-                                                        </div>
-                                                        <p class="small mb-0">{{ reply_comment.text|linebreaks }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
+                            <div class="comments d-flex flex-start{% if not forloop.first %} mt-4{% endif %}">
+                                {% with comment=comment %}
+                                    {% include "./comment.html" %}
+                                {% endwith %}
                             </div>
                         {% endfor %}
                     {% else %}
