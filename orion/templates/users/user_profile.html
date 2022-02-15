@@ -1,41 +1,23 @@
 {% extends "layouts/main.html" %}
 
-{% load static %}
-
 {% block title %}Личный кабинет @{{ user.username }}{% endblock %}
 
 {% block content %}
-    <div class="row mb-3">
-        <h1 class="col">{{ user.name }} @{{ user.username }}
-            {% if request.user == user or request.user.is_superuser %}
-                <a href="{%  url 'users:user_edit' pk=user.pk %}" class="btn btn-outline-secondary" title="Редактировать"><i class="bi bi-pencil"></i></a>
-            {% endif %}
-        </h1>
-    </div>
+
+    {% include 'users/user_profile_header.html' with user=user%}
 
     <div class="row">
         <div class="col-12 col-md-4">
-            <div class="mb-3">
-                <img src="{% get_media_prefix %}{{ user.avatar }}" alt="@{{ user.username }}" title="@{{ user.username }}"
-                     class="w-100">
-            </div>
-            <h4 class="mb-3 d-flex justify-content-around">
-                <span title="Публикации"><i class="bi bi-file-earmark-richtext"></i> 25 </span>
-                <span title="Комментарии"><i class="bi bi-chat"></i> 10 </span>
-                <span title="Подписчики"><i class="bi bi-bell"></i> 5 </span>
-            </h4>
-            <ul class="mb-3 px-0 list-group-flush">
-                <li class="list-group-item list-group-item-action">
-                    <a href="{% url 'users:user_detail_pk' pk=user.pk%}">Персональная информация</a></li>
-                <li class="list-group-item list-group-item-action">
-                    <a href="{% url 'users:user_detail_posts' pk=user.pk %}">Публикации</a></li>
-                <li class="list-group-item list-group-item-action">
-                    <a href="">Черновики</a></li>
-            </ul>
+            {% include 'users/user_profile_sidebar.html' with user=user%}
         </div>
         <div class="col-12 col-md-8">
-            {% include 'users/user_profile_info.html' %}
-            {% include 'users/user_profile_posts.html' %}
+            {% if section == 'user_detail' %}
+                {% include 'users/user_profile_detail.html' %}
+            {% elif section == 'user_posts' %}
+                {% include 'users/user_profile_posts.html' with subtitle='Публикации пользователя' %}
+            {% elif section == 'user_drafts' %}
+                {% include 'users/user_profile_posts.html' with subtitle='Черновики публикаций' %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,8 @@
+<div class="row mb-5">
+    <h1 class="col">{{ user.name }} @{{ user.username }}
+        {% if request.user == user or request.user.is_superuser %}
+            <a href="{%  url 'users:user_edit' pk=user.pk %}" class="btn btn-outline-secondary" title="Редактировать">
+                <i class="bi bi-pencil"></i></a>
+        {% endif %}
+    </h1>
+</div>

@@ -8,17 +8,26 @@ from users.models import User
 from users.forms import UserForm
 
 
-class UserDetailView(DetailView):
+class UserProfileView(DetailView):
     model = User
     context_object_name = 'user'
     template_name = 'users/user_profile.html'
     slug_field = 'username'
 
+    def get_context_data(self, **kwargs):
+        user = kwargs.get('object')
+        section = self.kwargs.get('section')
+        if not section:
+            section = 'user_detail'
 
-class UserPostListView(ListView):
-    model = User
-    context_object_name = 'posts'
-    template_name = 'users/user_profile_posts.html'
+        if section == 'user_posts':
+            kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.ACTIVE)
+        elif section == 'user_drafts':
+            kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.DRAFT)
+
+        kwargs['section'] = section
+
+        return super().get_context_data(**kwargs)
 
 
 class UserUpdateView(PermissionRequiredMixin, UpdateView):
@@ -31,7 +40,7 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         pk = self.kwargs['pk']
-        return reverse('users:user_detail_pk', kwargs={'pk': pk})
+        return reverse('users:user_profile', kwargs={'pk': pk})
 
     def has_permission(self):
         if self.request.user.is_anonymous:
