@@ -1,0 +1,30 @@
+{% extends "layouts/main.html" %}
+
+{% load static %}
+
+{% block title %}Личный кабинет @{{ user.username }}{% endblock %}
+
+{% block content %}
+    <div class="row mb-3">
+        <h1 class="col">{{ user.name }} @{{ user.username }}
+            {% if request.user == user or request.user.is_superuser %}
+                <a href="{%  url 'users:user_edit' pk=user.pk %}" class="btn btn-outline-secondary" title="Редактировать"><i class="bi bi-pencil"></i></a>
+            {% endif %}
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <img src="{% get_media_prefix %}{{ user.avatar }}" alt="@{{ user.username }}" title="@{{ user.username }}"
+                 class="w-100">
+        </div>
+        <div class="col-12 col-md-8">
+            <p><b>Имя:</b> {{ user.name }}</p>
+            <p><b>E-mail:</b> {{ user.email }}</p>
+            <p><b>Присоединился:</b> {{ user.date_joined|date }}</p>
+            <p><b>Дата рождения:</b> {{ user.birth_year|date }}</p>
+            <p><b>Краткая информация:</b></p>
+            <p> {{ user.bio }}</p>
+        </div>
+    </div>
+{% endblock %}
