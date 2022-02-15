@@ -1,9 +1,16 @@
 from django.db import models
 from django.conf import settings
 from hub.models import Hub
+from django.utils.translation import gettext_lazy as _
 
 
 class Post(models.Model):
+
+    class ArticleStatus(models.TextChoices):
+        DRAFT = 'DRAFT', _('DRAFT'),
+        ACTIVE = 'ACTIVE', _('ACTIVE'),
+        DELETED = 'DELETED', _('DELETED')
+
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     slug = models.SlugField(verbose_name='Элиас для урла')
     text = models.TextField(verbose_name='Полный текст')
@@ -13,6 +20,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts', null=True, blank=True, verbose_name='Картинка поста')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     modified_at = models.DateTimeField(auto_now=True, verbose_name="Дата редактирования")
+    status = models.CharField(choices=ArticleStatus.choices, max_length=16, default=ArticleStatus.ACTIVE)
 
     def __str__(self):
         return self.title
