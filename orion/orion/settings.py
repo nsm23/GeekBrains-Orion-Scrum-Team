@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'hub',
     'posts',
-    'comments'
+    'comments',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'website_filters': 'templatetags.website_filters',
+            }
         },
     },
 ]
@@ -137,6 +141,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'users.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
