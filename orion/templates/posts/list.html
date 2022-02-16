@@ -1,5 +1,5 @@
 {% for post in post_list %}
-  <div class="card card mb-3">
+  <div class="card card mb-5">
     {% if post.image %}<img src="{{ post.image.url }}" class="img-fluid" alt="{{ post.title }}">{% endif %}
     <div class="card-body">
       <h5 class="card-title">{{post.title}}</h5>
