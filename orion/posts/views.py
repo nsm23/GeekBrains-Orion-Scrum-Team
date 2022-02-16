@@ -11,4 +11,6 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['current_hub'] = self.object.hub.alias
         context['page_title'] = 'Хаб | ' + self.object.hub.title + ' | Просмотр поста — ' + self.object.title
+        context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
+
         return context

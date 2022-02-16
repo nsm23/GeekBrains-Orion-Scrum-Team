@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'hub',
     'posts',
+    'comments',
     'users',
 ]
 
