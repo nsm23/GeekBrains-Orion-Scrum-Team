@@ -7,6 +7,11 @@
     <link rel="shortcut icon" type="image/png" href="{%  static 'favicon.ico' %}"/>
 
     {#     STYLES     #}
+    <style>
+        .content {
+            flex: 1 0 auto;
+        }
+    </style>
     <link href="{%  static '/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{%  static '/css/style.css' %}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -18,7 +23,7 @@
     {% include "controls/header.html" %}
 
     {#     MAIN CONTENT     #}
-    <main class="flex-shrink-0">
+    <main class="wrapper flex-grow-1">
         <div class="container">
             <div class="row">
                 <div class="col-9">

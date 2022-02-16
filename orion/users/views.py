@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
 
 from posts.models import Post
@@ -40,7 +39,7 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         pk = self.kwargs['pk']
-        return reverse('users:user_profile', kwargs={'pk': pk})
+        return reverse('users:user_profile', kwargs={'pk': pk, 'section': 'user_detail'})
 
     def has_permission(self):
         if self.request.user.is_anonymous:
