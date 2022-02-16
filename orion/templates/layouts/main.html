@@ -36,9 +36,12 @@
     {% include "controls/footer.html" %}
 
     {#     SCRIPTS     #}
-    <script src="{%  static '/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{%  static '/js/js.cookie.min.js' %}"></script>
+    <script src="{%  static '/js/jquery.min.js' %}"></script>
+    <script src="{%  static '/js/app.js' %}"></script>
     {% comment %} <script src="{%  static '/js/masonry.pkgd.min.js' %}" async></script> {% endcomment %}
-
+    <script src="https://kit.fontawesome.com/be29b7c0d7.js" crossorigin="anonymous"></script>
+    <script src="{%  static '/js/bootstrap.bundle.min.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
