@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'hub',
-    'posts'
+    'posts',
+    'comments',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +80,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'website_filters': 'templatetags.website_filters',
+            }
         },
     },
 ]
@@ -136,6 +141,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'users.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -147,7 +153,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static_files')
 ]
 
-print(STATICFILES_DIRS)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

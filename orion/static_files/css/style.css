@@ -1,3 +1,15 @@
+body {
+  padding-top: 6rem;
+}
+
+.right-column {
+  top: 6rem;
+}
+
+.navbar {
+  background-color: #fff;
+}
+
 .card-link {
   position: absolute;
   display: block;
@@ -23,4 +35,18 @@
   .container-xxl {
     max-width:1140px;
   }
+}
+
+.navbar .bi {
+  font-size: 1.5rem;
+}
+
+.navbar a .bi-pencil-fill,
+.navbar a .bi-person-circle {
+  color: rgba(0,0,0,.55);
+}
+
+.navbar a:hover .bi-pencil-fill,
+.navbar a:hover .bi-person-circle {
+  color: rgba(0,0,0,.7);
 }

@@ -1,0 +1,15 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block title %}Войти{% endblock %}
+
+{% block content %}
+    <h1>Войти</h1>
+    <p>Чтобы авторизоваться, заполните, пожалуйста, форму:</p>
+    <form action="." method="post">
+        {{ form_login.as_p }}
+        {% csrf_token %}
+
+        <p><input type="submit" value="login"></p>
+    </form>
+    <p>Если у вас еще нет аккаунта, то <a href="{% url 'cabinet:register' %}">зарегистрируйтесь</a></p>
+{% endblock %}
