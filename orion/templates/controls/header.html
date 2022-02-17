@@ -23,7 +23,7 @@
                         <a href="/posts/create">
                             <i class="bi bi-pencil-fill me-3"></i>
                         </a>
-                        <a href="{% url 'cabinet:user_detail_slug' slug=user.username %}">
+                        <a href="{% url 'cabinet:user_profile' pk=user.pk section='user_detail' %}">
                             <img src="{{ user.avatar.url }}" class="rounded-circle" style="width: 2rem;" alt="@{{ user.username }}" title="@{{ user.username }}" />
                         </a>
                     {% else %}
