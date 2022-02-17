@@ -1,9 +1,8 @@
-from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
-from django.template.defaultfilters import slugify
+from pytils.translit import slugify
 from django.core.files.storage import FileSystemStorage
 
 from hub.models import Hub
