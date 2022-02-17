@@ -1,0 +1,20 @@
+<h2 class="mb-3">{{ subtitle }}</h2>
+{% for post in posts %}
+    <ul class="list-group list-group-flush px-0">
+        <li class="list-group-item d-flex justify-content-between px-0">
+            <span>
+                <a href="{% url "posts:detail" slug=post.slug %}" class="link-secondary">{{ post.title }}</a>
+            </span>
+            <span>
+                {% if request.user == user or request.user.is_superuser %}
+                    <a href="#" class="btn btn-sm btn-outline-secondary" title="Редактировать">
+                        <i class="bi bi-pencil"></i></a>
+                {% endif %}
+                {% if request.user == user or request.user.is_superuser %}
+                    <a href="#" class="btn btn-sm btn-outline-danger" title="Удалить">
+                        <i class="bi bi-trash"></i></a>
+                {% endif %}
+            </span>
+        </li>
+    </ul>
+{% endfor %}
