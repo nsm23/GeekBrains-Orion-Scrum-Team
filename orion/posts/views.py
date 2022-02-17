@@ -1,10 +1,12 @@
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import slugify
 from django.core.files.storage import FileSystemStorage
 
+from hub.models import Hub
 from posts.models import Post
 
 
@@ -33,12 +35,50 @@ class PostCreateView(CreateView):
         self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
         self.object.slug = slugify(self.object.title)
         self.object.user = self.request.user
-        post_image = self.request.FILES['image']
-        fs = FileSystemStorage()
-        fs.save(post_image.name, post_image)
+        if 'image' in self.request:
+            post_image = self.request.FILES['image']
+            fs = FileSystemStorage()
+            fs.save(post_image.name, post_image)
 
         self.object.save()
         if publish:
             return HttpResponseRedirect(reverse('main'))
         return HttpResponseRedirect(reverse('cabinet:user_profile',
                                             kwargs={'pk': self.request.user.id, 'section': 'user_drafts'}))
+
+
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = 'posts/post_form.html'
+    fields = ['title', 'brief_text', 'text', 'image', 'hub', 'status']
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.title = request.POST['title']
+        hub_id = request.POST['hub']
+        self.object.hub = Hub.objects.get(id=hub_id)
+        self.object.brief_text = request.POST['brief_text']
+        self.object.text = request.POST['text']
+        publish = 'publish' in request.POST
+        self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
+        self.object.slug = slugify(self.object.title)
+        if 'image' in request:
+            post_image = request.FILES['image']
+            fs = FileSystemStorage()
+            fs.save(post_image.name, post_image)
+
+        self.object.save()
+        if publish:
+            return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse('cabinet:user_profile',
+                                            kwargs={'pk': self.request.user.id, 'section': 'user_drafts'}))
+
+
+class PostDeleteView(DeleteView):
+    model = Post
+    success_url = reverse_lazy('main')
+    template_name = 'posts/post_delete.html'
+

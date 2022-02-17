@@ -8,20 +8,29 @@
   {% csrf_token %}
   <div class="mb-3">
     <label for="title" class="form-label">Название статьи:</label>
-    <input type="text" class="form-control" id="title" name="title" placeholder="Название">
+    <input type="text" class="form-control" id="title" name="title" placeholder="Название"
+           {% if form.title.value %}value="{{form.title.value}}"{% endif %}>
   </div>
   <div class="mb-3">
     <label for="brief_text" class="form-label">Описание</label>
-    <textarea class="form-control" id="brief_text" name="brief_text" placeholder="Описание" rows="2"></textarea>
+    <textarea class="form-control"
+              id="brief_text"
+              name="brief_text"
+              placeholder="Описание"
+              rows="2">{% if form.brief_text.value %}value="{{form.brief_text.value}}"{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="text" class="form-label">Напишите о чём Вы хотите рассказать:</label>
-    <textarea class="form-control" id="text" name="text" placeholder="Содержание" rows="10"></textarea>
+    <textarea class="form-control"
+              id="text"
+              name="text"
+              placeholder="Содержание"
+              rows="10">{% if form.text.value %}value="{{form.text.value}}"{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="hub" class="form-label">В каком разделе:</label>
     <select class="form-select" name="hub" id="hub">
-      <option disabled selected value> -- выберите раздел -- </option>
+      <option disabled> -- выберите раздел -- </option>
       {% for hub in hubs %}
         <option value="{{hub.id}}">{{hub}}</option>
       {% endfor %}
@@ -29,10 +38,10 @@
   </div>
   <div class="mb-3">
     <label for="image" class="form-label">Приложите изображение:</label>
-    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+    <input type="file" class="form-control" id="image" name="image" accept="image/*" value="{{form.image.value}}">
   </div>
   <div class="mb-3">
-    <input class="form-check-input me-1" type="checkbox" value="true" aria-label="..." name="publish">
+    <input class="form-check-input me-1" type="checkbox" {% if form.status %}checked{% endif %} aria-label="..." name="publish">
     Опубликовать
   </div>
 
