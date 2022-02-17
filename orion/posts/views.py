@@ -81,4 +81,3 @@ class PostDeleteView(DeleteView):
     model = Post
     success_url = reverse_lazy('main')
     template_name = 'posts/post_delete.html'
-

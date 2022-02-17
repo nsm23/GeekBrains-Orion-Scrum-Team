@@ -17,7 +17,7 @@
               id="brief_text"
               name="brief_text"
               placeholder="Описание"
-              rows="2">{% if form.brief_text.value %}value="{{form.brief_text.value}}"{% endif %}</textarea>
+              rows="2">{% if form.brief_text.value %}{{form.brief_text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="text" class="form-label">Напишите о чём Вы хотите рассказать:</label>
@@ -25,7 +25,7 @@
               id="text"
               name="text"
               placeholder="Содержание"
-              rows="10">{% if form.text.value %}value="{{form.text.value}}"{% endif %}</textarea>
+              rows="10">{% if form.text.value %}{{form.text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="hub" class="form-label">В каком разделе:</label>
@@ -41,7 +41,7 @@
     <input type="file" class="form-control" id="image" name="image" accept="image/*" value="{{form.image.value}}">
   </div>
   <div class="mb-3">
-    <input class="form-check-input me-1" type="checkbox" {% if form.status %}checked{% endif %} aria-label="..." name="publish">
+    <input class="form-check-input me-1" type="checkbox" {% if form.status.value != "DRAFT" %}checked{% endif %} aria-label="..." name="publish">
     Опубликовать
   </div>
 

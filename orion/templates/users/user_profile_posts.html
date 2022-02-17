@@ -2,10 +2,10 @@
 {% for post in posts %}
     <ul class="list-group list-group-flush px-0">
         <li class="list-group-item d-flex justify-content-between px-0">
-            <span>
+            <div class="col-9">
                 <a href="{% url "posts:detail" slug=post.slug %}" class="link-secondary">{{ post.title }}</a>
-            </span>
-            <span>
+            </div>
+            <siv class="col-3">
                 {% if request.user == user or request.user.is_superuser %}
                     <a href="{% url "posts:edit" slug=post.slug %}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
                         <i class="bi bi-pencil"></i></a>
@@ -14,7 +14,7 @@
                     <a href="{% url "posts:delete" slug=post.slug %}" class="btn btn-sm btn-outline-danger" title="Удалить">
                         <i class="bi bi-trash"></i></a>
                 {% endif %}
-            </span>
+            </siv>
         </li>
     </ul>
 {% endfor %}
