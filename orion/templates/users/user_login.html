@@ -1,0 +1,14 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h1>Login</h1>
+    <p>Please, sign up using the following form:</p>
+    <form action="." method="post">
+        {{ form_login.as_p }}
+        {% csrf_token %}
+
+        <p><input type="submit" value="login"></p>
+    </form>
+{% endblock %}
