@@ -1,4 +1,6 @@
 from django import forms
+from django.forms import HiddenInput, PasswordInput
+
 from users.models import User
 
 
@@ -13,3 +15,37 @@ class UserForm(forms.ModelForm):
         widgets = {
             'birth_year': DateInput,
         }
+
+
+class RegisterForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    password = forms.CharField(label='password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='password2', widget=forms.PasswordInput)
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd['password'] != cd['password2']:
+            raise forms.ValidationError('Passwords don\'t match.')
+        return cd['password2']
+
+
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name == 'password':
+                field.widget = PasswordInput()
+                continue
+
+
+
+
+
+
