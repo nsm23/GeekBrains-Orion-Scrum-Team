@@ -32,10 +32,13 @@ class RegisterForm(forms.ModelForm):
         return cd['password2']
 
 
-class LoginForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password']
+class LoginForm(forms.Form):
+    # class Meta:
+    #     model = User
+    #     fields = ['username', 'password']
+
+    username = forms.CharField(label='Логин', widget=forms.TextInput)
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

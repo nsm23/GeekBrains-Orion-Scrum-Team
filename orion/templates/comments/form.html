@@ -23,7 +23,7 @@
 {% elif create_comment_form %}
     <div class="card-body p-4 pt-0">
         <div class="alert alert-warning" role="alert">
-            Для того чтобы оставлять комментарии нужно <a href="javascript:void(0)">авторизоваться</a>.
+            Для того чтобы оставлять комментарии нужно <a href="{% url 'cabinet:login' %}">авторизоваться</a>.
         </div>
     </div>
 {% endif %}

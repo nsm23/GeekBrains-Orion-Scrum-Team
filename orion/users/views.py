@@ -13,13 +13,16 @@ from users.forms import UserForm, RegisterForm, LoginForm
 def login(request):
     if request.method == 'POST':
         form_login = LoginForm(data=request.POST)
+
+        print(form_login)
         if form_login.is_valid():
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = auth.authenticate(username=username, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponse('Authenticated successfully')
+                # return HttpResponse('Authenticated successfully')
+                return HttpResponseRedirect(reverse_lazy('main'))
             else:
                 return HttpResponse('Disabled account')
     else:
@@ -46,7 +49,7 @@ def register(request):
 
 def logout(request):
     auth.logout(request)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return HttpResponseRedirect(reverse_lazy('main'))
 
 
 class UserProfileView(DetailView):
