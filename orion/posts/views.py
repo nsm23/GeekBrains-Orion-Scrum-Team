@@ -32,7 +32,7 @@ class PostCreateView(CreateView):
         self.object = form.save()
         publish = 'publish' in self.request.POST
         self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
-        self.object.slug = slugify(self.object.title)
+        self.object.slug = slugify(self.object.title + str(self.object.id))
         self.object.user = self.request.user
         if 'image' in self.request:
             post_image = self.request.FILES['image']
@@ -63,7 +63,7 @@ class PostUpdateView(UpdateView):
         self.object.text = request.POST['text']
         publish = 'publish' in request.POST
         self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
-        self.object.slug = slugify(self.object.title)
+        self.object.slug = slugify(self.object.title + str(self.object.id))
         if 'image' in request:
             post_image = request.FILES['image']
             fs = FileSystemStorage()
