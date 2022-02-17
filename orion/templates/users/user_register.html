@@ -1,13 +1,14 @@
 {% extends "layouts/main.html" %}
 {% load static %}
-{% block title %}Create an account{% endblock %}
+{% block title %}Создание аккаунта{% endblock %}
 
 {% block content %}
-    <h1>Create an account</h1>
-    <p>Please, sign up using the following form:</p>
+    <h1>Создание аккаунта</h1>
+    <p>Чтобы зарегистрироваться, заполните, пожалуйста, форму:</p>
     <form action="." method="post">
         {{ form_reg.as_p }}
         {% csrf_token %}
         <p><input type="submit" value="Create my account"></p>
     </form>
+    <p>Если у вас уже есть аккаунт, то <a href="{% url 'cabinet:login' %}">авторизируйтесь</a></p>
 {% endblock %}
