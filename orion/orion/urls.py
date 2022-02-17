@@ -26,6 +26,7 @@ urlpatterns = [
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls', namespace='posts')),
+    path('comments/', include('comments.urls', namespace='comments')),
     path('cabinet/', include('users.urls', namespace='cabinet')),
 ]
 
