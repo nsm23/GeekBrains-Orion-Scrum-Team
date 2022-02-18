@@ -93,6 +93,16 @@ WSGI_APPLICATION = 'orion.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': os.getenv('POSTGRES_NAME'),
+#             'USER': os.getenv('POSTGRES_USER'),
+#             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+#             'HOST': os.getenv('POSTGRES_HOST'),
+#             'PORT': os.getenv('POSTGRES_PORT'),
+#     }
+# }
 DATABASES = {
     'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -136,6 +146,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
+
+USE_L10N = False
+DATE_FORMAT = '%Y-%m-%d'
 
 USE_I18N = True
 
