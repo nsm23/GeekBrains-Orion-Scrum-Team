@@ -10,17 +10,8 @@ from posts.models import Post
 
 
 class PostDetailView(DetailView):
-
     model = Post
     template_name = 'posts/index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_hub'] = self.object.hub.alias
-        context['page_title'] = 'Хаб | ' + self.object.hub.title + ' | Просмотр поста — ' + self.object.title
-        context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
-
-        return context
 
 
 class PostCreateView(CreateView):
