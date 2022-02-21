@@ -28,6 +28,7 @@ urlpatterns = [
     path('posts/', include('posts.urls', namespace='posts')),
     path('comments/', include('comments.urls', namespace='comments')),
     path('cabinet/', include('users.urls', namespace='cabinet')),
+    path('notifications/', include('notifications.urls', namespace='notifications')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
