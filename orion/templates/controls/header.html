@@ -20,6 +20,30 @@
                 </ul>
                 <div class="d-flex">
                     {% if user.is_authenticated %}
+                        <div class="dropdown mx-3">
+                            <a href="javascript:void(0)" id="dropdownNotifications" data-bs-toggle="dropdown"
+                               aria-expanded="false" title="Уведомления" class="text-secondary">
+                                <i class="bi bi-bell-fill"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    99+
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownNotifications">
+
+                                {% for notification in notifications %}
+                                    <li><a href="" class="dropdown-item">{{ notification.title }}</a></li>
+                                {% endfor %}
+
+                                {#  EXAMPLE  #}
+                                <li><a class="dropdown-item" href="">Пользователь USERNAME прокомментировал ваш пост POST</a></li>
+                                <li><a class="dropdown-item" href="">Пользователю USERNAME понравился ваш пост POST</a></li>
+                                <li><a class="dropdown-item" href="">Пользователю USERNAME понравился ваш пост POST</a></li>
+                                <li><a class="dropdown-item" href="">Пользователь USERNAME прокомментировал ваш пост POST</a></li>
+                                <li><a class="dropdown-item" href="">Пользователю USERNAME понравился ваш пост POST</a></li>
+
+                                <li><a class="dropdown-item" href="">See more...</a></li>
+                            </ul>
+                        </div>
                         <a href="/posts/create">
                             <i class="bi bi-pencil-fill me-3"></i>
                         </a>
