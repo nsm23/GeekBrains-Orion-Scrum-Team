@@ -1,6 +1,6 @@
     <p><b>Имя:</b> {{ user.name }}</p>
     <p><b>E-mail:</b> {{ user.email }}</p>
-    <p><b>Присоединился:</b> {{ user.date_joined|date }}</p>
-    <p><b>Дата рождения:</b> {{ user.birth_year|date }}</p>
+    <p><b>Присоединился:</b> {{ user.date_joined|date:"j.m.Y" }}</p>
+    <p><b>Дата рождения:</b> {{ user.birth_year|date:"j.m.Y" }}</p>
     <p><b>Краткая информация:</b></p>
     <p> {{ user.bio }}</p>
