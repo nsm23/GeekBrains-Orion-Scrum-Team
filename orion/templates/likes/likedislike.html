@@ -1,0 +1,9 @@
+<button  style= 'padding:1px 14px;' data-id="{{ post.id }}" data-type="posts" data-action="like" title="like">
+        <i class="bi bi-hand-thumbs-up" data-count="like">  like {{ like_obj.votes.likes.count }}</i>
+</button>
+</p>
+
+<button data-id="{{ post.id }}" data-type="posts" data-action="dislike" title="dislike">
+        <i class="bi bi-hand-thumbs-down" data-count="dislike">dislike {{ like_obj.votes.dislikes.count }}</i>
+    </button>
+
