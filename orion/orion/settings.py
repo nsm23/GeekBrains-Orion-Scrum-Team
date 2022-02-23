@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'comments',
     'users',
     'likes',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
+
+USE_L10N = False
+DATE_FORMAT = '%Y-%m-%d'
 
 USE_I18N = True
 
