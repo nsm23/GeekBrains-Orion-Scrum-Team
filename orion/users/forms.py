@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import HiddenInput, PasswordInput
+from django.forms import PasswordInput
 
 from users.models import User
 
@@ -22,8 +22,8 @@ class RegisterForm(forms.ModelForm):
         model = User
         fields = ('username', 'email')
 
-    password = forms.CharField(label='password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='password2', widget=forms.PasswordInput)
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -33,9 +33,6 @@ class RegisterForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    # class Meta:
-    #     model = User
-    #     fields = ['username', 'password']
 
     username = forms.CharField(label='Логин', widget=forms.TextInput)
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
