@@ -9,7 +9,7 @@
   <div class="mb-3">
     <label for="title" class="form-label">Название статьи:</label>
     <input type="text" class="form-control" id="title" name="title" placeholder="Название"
-           {% if form.title.value %}value="{{form.title.value}}"{% endif %}>
+           {% if form.title.value %}value="{{form.title.value}}"{% endif %} required>
   </div>
   <div class="mb-3">
     <label for="brief_text" class="form-label">Описание</label>
@@ -17,7 +17,7 @@
               id="brief_text"
               name="brief_text"
               placeholder="Описание"
-              rows="2">{% if form.brief_text.value %}{{form.brief_text.value}}{% endif %}</textarea>
+              rows="2" required>{% if form.brief_text.value %}{{form.brief_text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="text" class="form-label">Напишите о чём Вы хотите рассказать:</label>
@@ -25,7 +25,8 @@
               id="text"
               name="text"
               placeholder="Содержание"
-              rows="10">{% if form.text.value %}{{form.text.value}}{% endif %}</textarea>
+              rows="10"
+              required>{% if form.text.value %}{{form.text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="hub" class="form-label">В каком разделе:</label>

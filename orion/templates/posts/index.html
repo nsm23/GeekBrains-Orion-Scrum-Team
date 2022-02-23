@@ -1,4 +1,7 @@
 {% extends "layouts/main.html" %}
+
+{% block title %} Хаб | {{object.hub.title}} | {{object.title}} {% endblock %}
+
 {% block content %}
     {% comment %} <h1>Страница просмотра поста</h1> {% endcomment %}
     
@@ -15,6 +18,6 @@
         </div>
       </div>
 
-      {% include "../comments/list.html" %}
+      {% include "comments/list.html" %}
 
 {% endblock %}
