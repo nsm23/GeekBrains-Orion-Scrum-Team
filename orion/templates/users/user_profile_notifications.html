@@ -6,7 +6,7 @@
             {% include "users/user_profile_notifications_single.html" with comment=comment%}
         {% endfor %}
     {% endif %}
-    {% if unread_comments %}
+    {% if read_comments %}
         <h3>Прочитанные комментарии </h3>
         {% for comment in read_comments %}
             {% include "users/user_profile_notifications_single.html" with comment=comment%}

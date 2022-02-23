@@ -56,8 +56,8 @@ const markNotificationRead = event => {
             .then(response => {
                 if (response["ids"]){
                     const notificationsCounterSpan = document.querySelector('#notifications-counter');
-                    notificationsCounterSpan.textContent = +notificationsCounterSpan.textContent - 1;
-
+                    let count = +notificationsCounterSpan.textContent - 1;
+                    notificationsCounterSpan.textContent = count > 0 ? count : "";
                     a.classList.remove("text-dark");
                     a.classList.add("text-success");
                     a.setAttribute("title", "Не прочитано");
@@ -160,7 +160,8 @@ const generateNoificationsBar = (notifications_count, comments, current_user_id)
     const notificationsUl = document.querySelector('#notifications-ul');
 
 
-    notificationsCounterSpan.textContent = notifications_count;
+    if (notifications_count > 0)
+        notificationsCounterSpan.textContent = notifications_count;
 
     notificationsUl.innerHTML = '';
     if (comments) {
