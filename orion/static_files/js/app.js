@@ -146,3 +146,17 @@ validate_comment_text = function(elem) {
 
     $(elem).closest('.comment-form').find('.btn-comment-save').attr('disabled', invalid)
 }
+
+tinyMCE.init({
+    selector: '.tinymce',
+    theme : "silver",
+    height: 500,
+    menubar: false,
+    language : 'ru',
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+});
