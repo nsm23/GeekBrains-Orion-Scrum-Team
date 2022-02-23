@@ -17,6 +17,8 @@
                 {% include 'users/user_profile_posts.html' with subtitle='Публикации пользователя' %}
             {% elif section == 'user_drafts' %}
                 {% include 'users/user_profile_posts.html' with subtitle='Черновики публикаций' %}
+            {% elif section == 'user_notifications' %}
+                {% include 'users/user_profile_notifications.html' with subtitle='Уведомления' %}
             {% endif %}
         </div>
     </div>

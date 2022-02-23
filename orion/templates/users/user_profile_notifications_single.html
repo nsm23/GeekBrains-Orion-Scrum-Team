@@ -1,0 +1,11 @@
+<li class="list-group-item d-flex justify-content-between px-0">
+    <div class="col-2">
+        <img src="{{ comment.user.avatar.url }}" class="w-75 rounded-circle">
+    </div>
+    <div class="col-10">
+        <div><strong>@{{ comment.user.username }}</strong></div>
+        <div><small>{{ comment.created_at|date:"d.m.Y H:i" }}</small></div>
+        <div>{{ comment.text }}</div>
+        <div><a href="{% url 'posts:detail' slug=comment.post.slug %}#comment-{{ comment.id }}">Перейти к комментарию</a></div>
+    </div>
+</li>
