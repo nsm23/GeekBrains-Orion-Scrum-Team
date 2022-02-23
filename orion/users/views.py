@@ -2,7 +2,7 @@ from django.contrib import auth
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
-from django.views.generic import DetailView, UpdateView, CreateView
+from django.views.generic import DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from posts.models import Post
@@ -79,9 +79,7 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = UserForm
     template_name_suffix = '_update_form'
     permission_required = 'users.can_update'
-
-    # ToDo: add url for to redirect to a login form
-    # login_url = reverse()
+    login_url = reverse_lazy('users:login')
 
     def get_success_url(self):
         pk = self.kwargs['pk']
