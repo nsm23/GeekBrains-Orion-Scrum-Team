@@ -22,6 +22,7 @@ from hub.views import MainView
 
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
+    path('tinymce/', include('tinymce.urls')),
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls', namespace='posts')),
