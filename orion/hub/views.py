@@ -7,14 +7,21 @@ from hub.models import Hub
 
 
 class HubView(ListView):
-    model = Post
     template_name = 'hub/index.html'
+    paginate_by = 12
 
-    def get_context_data(self, **kwargs):
-        slug = self.kwargs["slug"] or ''
-        queryset = Post.objects.filter(Q(hub__alias=slug) & Q(status=Post.ArticleStatus.ACTIVE)).order_by('-created_at')
-        context = super().get_context_data(object_list=queryset, **kwargs)
+    def get_queryset(self):
+        slug = self.kwargs.get("slug")
         hub = get_object_or_404(Hub, alias=slug)
-        context['page_title'] = f'Хаб | {hub.title}'
-        context['current_hub'] = slug
-        return context
+        self.extra_context = {
+            'page_title': f'Хаб | {hub}',
+            'current_hub': slug,
+        }
+        return Post.objects.filter(Q(hub__alias=slug) & Q(status=Post.ArticleStatus.ACTIVE))
+
+
+class MainView(ListView):
+    template_name = 'index.html'
+    paginate_by = 12
+    extra_context = {'page_title': 'Главная'}
+    queryset = Post.objects.filter(status=Post.ArticleStatus.ACTIVE)

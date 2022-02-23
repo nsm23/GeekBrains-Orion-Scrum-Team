@@ -17,12 +17,12 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
-
-from orion.views import MainView
+from hub.views import MainView
 
 
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
+    path('tinymce/', include('tinymce.urls')),
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls', namespace='posts')),
