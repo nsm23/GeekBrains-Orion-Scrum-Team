@@ -1,7 +1,8 @@
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
 const POST_URL = "/posts/{{slug}}/"
-const USER_URL = "/cabinet/{{id}}/user_detail/"
+const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
+const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_notifications/"
 
 
 function getCookie(name) {
@@ -89,7 +90,7 @@ const generateCommentNotification = (username, user_id, user_img_url, text, date
     li.appendChild(div2);
 
     let aUser = document.createElement("a");
-    let user_url = USER_URL.replace("{{id}}", user_id)
+    let user_url = USER_PROFILE_URL.replace("{{id}}", user_id)
     aUser.setAttribute("href", user_url);
     aUser.classList.add("text-dark");
     aUser.textContent = "@" + username;
@@ -136,7 +137,25 @@ const generateCommentNotification = (username, user_id, user_img_url, text, date
 }
 
 
-const generateNoificationsBar = (notifications_count, comments) => {
+const generateAllNotificationsLink = (user_id) => {
+    let li = document.createElement('li');
+    li.classList.add("row", "mt-4", "mb-2");
+
+    let div = document.createElement("div");
+    div.classList.add("col", "text-center");
+    li.appendChild(div);
+
+    let a = document.createElement("a");
+    a.classList.add("text-dark");
+    a.href = USER_PROFILE_NOTIFICATIONS_URL.replace("{{id}}", user_id);
+    a.textContent = "Просмотреть все уведомления";
+    div.appendChild(a);
+
+    return li;
+}
+
+
+const generateNoificationsBar = (notifications_count, comments, current_user_id) => {
     const notificationsCounterSpan = document.querySelector('#notifications-counter');
     const notificationsUl = document.querySelector('#notifications-ul');
 
@@ -158,10 +177,8 @@ const generateNoificationsBar = (notifications_count, comments) => {
             notificationsUl.appendChild(commentLi);
         }
     }
-    // if (response["comments"].length < response["notifications_count"])
-    //     notificationsUl.innerHTML += `<li class="row mt-4 mb-2">
-    //         <div class="col text-center"><a href="" class="text-dark">Просмотреть все уведомления</a></div></li>`
-
+    let allNotificationsLink = generateAllNotificationsLink(current_user_id);
+    notificationsUl.appendChild(allNotificationsLink);
 }
 
 document.addEventListener("DOMContentLoaded", event => {
@@ -173,7 +190,7 @@ document.addEventListener("DOMContentLoaded", event => {
             if (response["error"])
                 console.log(response["error"])
             else {
-                generateNoificationsBar(response["notifications_count"], response["comments"]);
+                generateNoificationsBar(response["notifications_count"], response["comments"], response["current_user_id"]);
             }
         })
         .catch()

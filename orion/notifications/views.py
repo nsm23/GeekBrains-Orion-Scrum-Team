@@ -28,7 +28,9 @@ def get_notifications(request):
             'comment_id': comment.id,
         } for comment in comments[:3]
     ]
-    return JsonResponse({'comments': response_comments, 'notifications_count': len(comments)})
+    return JsonResponse({'comments': response_comments,
+                         'notifications_count': len(comments),
+                         'current_user_id': request.user.id})
 
 
 @require_http_methods(["POST"])

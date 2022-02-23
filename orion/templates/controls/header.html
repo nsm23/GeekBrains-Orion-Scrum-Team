@@ -40,6 +40,7 @@
                                 <img src="{{ user.avatar.url }}" class="rounded-circle" style="width: 2rem;" alt="@{{ user.username }}" title="@{{ user.username }}" />
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="">
+                                <li class="px-3"><strong>@{{ user.username }}</strong></li>
                                 <li><a class="dropdown-item" href="{% url 'cabinet:user_profile' pk=user.pk section='user_detail' %}">Профиль</a></li>
                                 <li><a class="dropdown-item" href="{% url 'cabinet:logout' %}">Выйти</a></li>
                             </ul>
