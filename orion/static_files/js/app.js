@@ -1,41 +1,41 @@
-$( document ).ready(function() {
+$(document).ready(function () {
     bind_show_reply_form() // показ формы ответа
     bind_hide_reply_form() // скрытие формы ответа при фокусе на поле нового коммента
     bind_save_comment() // сохранение коммента
     bind_comment_validation() // валидцая формы сохранения коммента
 });
 
-bind_hide_reply_form = function() {
+bind_hide_reply_form = function () {
     if ($('.comments-textarea[hide-reply="true"]').length >= 1) {
-        $('.comments-textarea[hide-reply="true"]').on('focus', function() {
+        $('.comments-textarea[hide-reply="true"]').on('focus', function () {
             hide_all_reply_forms()
         })
     }
 }
 
-bind_show_reply_form = function() {
-    $('.reply-link').each(function(_, elem){
-        $(elem).on('click', function(){
+bind_show_reply_form = function () {
+    $('.reply-link').each(function (_, elem) {
+        $(elem).on('click', function () {
             show_reply_form(elem)
         })
     })
 }
 
-hide_all_reply_forms = function() {
+hide_all_reply_forms = function () {
     $('.reply-form').addClass('d-none')
 }
 
-bind_save_comment = function() {
-    $('.btn-comment-save').each(function(_, elem){
-        $(elem).on('click', function(){
+bind_save_comment = function () {
+    $('.btn-comment-save').each(function (_, elem) {
+        $(elem).on('click', function () {
             save_comment(elem)
         })
     })
 }
 
-bind_comment_validation = function() {
-    $('.comments-textarea').each(function(_, elem){
-        $(elem).on('input propertychange', function(){
+bind_comment_validation = function () {
+    $('.comments-textarea').each(function (_, elem) {
+        $(elem).on('input propertychange', function () {
             validate_comment_text(elem)
         })
     })
@@ -44,20 +44,20 @@ bind_comment_validation = function() {
 /**
  * Показывает форму ответа при клике на "Ответить"
  */
-show_reply_form = function(elem) {
+show_reply_form = function (elem) {
     hide_all_reply_forms()
 
     var comment_id = $(elem).data('comment_id') ?? 0
     if (comment_id <= 0) return false;
 
-    if ($('#reply-to-' + comment_id + '-form').length > 0){
+    if ($('#reply-to-' + comment_id + '-form').length > 0) {
         $('#reply-to-' + comment_id + '-form').removeClass('d-none')
 
         $('#reply-to-' + comment_id + '-form').find('.comments-textarea').focus()
     }
 }
 
-save_comment = function(elem) {
+save_comment = function (elem) {
     var comment_form = $(elem).closest('.comment-form')
     if (comment_form.length > 0) {
         var comment_textarea = comment_form.find('.comments-textarea') ?? ''
@@ -77,15 +77,15 @@ save_comment = function(elem) {
                         parent: parent_id,
                         csrfmiddlewaretoken: Cookies.get('csrftoken'),
                     },
-                    error: function(jqXHR, error, errorThrown) {  
+                    error: function (jqXHR, error, errorThrown) {
                         comment_textarea.attr('readonly', false)
                         if (btn_comment_save.length > 0) {
                             btn_comment_save.attr('disabled', false)
                             btn_comment_save.html('Отправить <i class="fas fa-long-arrow-alt-right ms-1"></i>')
                         }
-                        
-                        if(jqXHR.status && jqXHR.status == 400){
-                            alert(jqXHR.responseText); 
+
+                        if (jqXHR.status && jqXHR.status == 400) {
+                            alert(jqXHR.responseText);
                         } else {
                             alert("Something went wrong")
                         }
@@ -110,20 +110,20 @@ save_comment = function(elem) {
                                 $('#post-comments').html(comment_html)
                             }
 
-                            $('#comment-' + json.comment_id).find('.reply-link').on('click', function(){
+                            $('#comment-' + json.comment_id).find('.reply-link').on('click', function () {
                                 show_reply_form($(this))
                             })
 
-                            $('#reply-to-' + json.comment_id + '-form').find('.comments-textarea').on('input propertychange', function(){
+                            $('#reply-to-' + json.comment_id + '-form').find('.comments-textarea').on('input propertychange', function () {
                                 validate_comment_text($(this))
                             })
 
-                            $('#reply-to-' + json.comment_id + '-form').find('.btn-comment-save').on('click', function(){
+                            $('#reply-to-' + json.comment_id + '-form').find('.btn-comment-save').on('click', function () {
                                 save_comment($(this))
                             })
                         }
                     },
-                    beforeSend: function() {
+                    beforeSend: function () {
                         comment_textarea.attr('readonly', true)
                         if (btn_comment_save.length > 0) {
                             btn_comment_save.attr('disabled', true)
@@ -136,13 +136,63 @@ save_comment = function(elem) {
     }
 }
 
-validate_comment_text = function(elem) {
+validate_comment_text = function (elem) {
     var comment_text = $(elem).val() ?? ''
 
     var invalid = false
     if ($.trim(comment_text) == '') {
         invalid = true
-    } 
+    }
 
     $(elem).closest('.comment-form').find('.btn-comment-save').attr('disabled', invalid)
 }
+
+function like() {
+    const like = $(this);
+    const type = like.data('type');
+    const pk = like.data('id');
+    const action = like.data('action');
+    const dislike = like.next();
+    console.log(like)
+    $.ajax({
+        url: "/" + type + "/" + pk + "/" + action + "/",
+        type: 'POST',
+        data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
+
+        success: function (json) {
+            like.find("[data-count='like']").text(json.like_count);
+            dislike.find("[data-count='dislike']").text(json.dislike_count);
+        }
+
+    });
+    return false;
+}
+
+function dislike() {
+    const dislike = $(this);
+    const type = dislike.data('type');
+    const pk = dislike.data('id');
+    const action = dislike.data('action');
+    const like = dislike.prev();
+
+    $.ajax({
+        url: "/" + type + "/" + pk + "/" + action + "/",
+        type: 'POST',
+        data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
+
+        success: function (json) {
+            dislike.find("[data-count='dislike']").text(json.dislike_count);
+            like.find("[data-count='like']").text(json.like_count);
+        }
+    });
+
+    return false;
+}
+
+
+// Подключение обработчиков
+$(function () {
+    $('[data-action="like"]').click(like);
+    $('[data-action="dislike"]').click(dislike);
+});
+
