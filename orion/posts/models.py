@@ -1,7 +1,9 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from hub.models import Hub
 from django.utils.translation import gettext_lazy as _
 
+from likes.models import LikeDislike
 from users.models import User
 
 
@@ -22,9 +24,10 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     modified_at = models.DateTimeField(auto_now=True, verbose_name="Дата редактирования")
     status = models.CharField(choices=ArticleStatus.choices, max_length=16, default=ArticleStatus.ACTIVE)
+    votes = GenericRelation(LikeDislike, related_query_name='posts')
 
     def __str__(self):
         return self.title
-
+        
     class Meta:
         ordering = ('-created_at',)

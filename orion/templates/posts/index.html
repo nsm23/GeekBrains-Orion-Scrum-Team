@@ -4,7 +4,7 @@
 
 {% block content %}
     {% comment %} <h1>Страница просмотра поста</h1> {% endcomment %}
-    
+
     <div class="card mb-3">
         {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
         <div class="card-body">
@@ -16,8 +16,8 @@
           <p class="card-text">{{ post.text|safe }}</p>
           {% load humanize %}
         </div>
-      </div>
-
-      {% include "comments/list.html" %}
+    </div>
+    {% include '../likes/likedislike.html' %}
+    {% include "../comments/list.html" %}
 
 {% endblock %}
