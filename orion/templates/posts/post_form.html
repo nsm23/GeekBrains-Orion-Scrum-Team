@@ -17,7 +17,8 @@
               id="brief_text"
               name="brief_text"
               placeholder="Описание"
-              rows="2" required>{% if form.brief_text.value %}{{form.brief_text.value}}{% endif %}</textarea>
+              rows="2"
+              >{% if form.brief_text.value %}{{form.brief_text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="text" class="form-label">Напишите о чём Вы хотите рассказать:</label>
@@ -26,7 +27,7 @@
               name="text"
               placeholder="Содержание"
               rows="10"
-              required>{% if form.text.value %}{{form.text.value}}{% endif %}</textarea>
+              >{% if form.text.value %}{{form.text.value}}{% endif %}</textarea>
   </div>
   <div class="mb-3">
     <label for="hub" class="form-label">В каком разделе:</label>

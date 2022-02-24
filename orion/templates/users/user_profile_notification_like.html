@@ -4,9 +4,9 @@
     </div>
     <div class="col-10">
         <div>
-          <strong>Пользователь @{{ like.user.username }}</strong> оценил вашу
+          <strong>Пользователь @{{ like.user.username }}</strong> оценил вашу статью
           <a href="{% url 'posts:detail' slug=like.content_object.slug %}">
-            статью
+             "{{like.content_object.title}}"
           </a>
         </div>
     </div>

@@ -88,8 +88,8 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
 
             read_comment_ids = [n.object_id for n in read_comment_notifications]
             unread_comment_ids = [n.object_id for n in unread_comment_notifications]
-            read_likes_ids = [n.object_id for n in read_like_notifications]
-            unread_likes_ids = [n.object_id for n in unread_like_notifications]
+            read_likes_ids = [n.object_id for n in read_like_notifications if n.content_object.user != user]
+            unread_likes_ids = [n.object_id for n in unread_like_notifications if n.content_object.user != user]
 
             read_comments = Comment.objects.filter(Q(id__in=read_comment_ids, parent__isnull=True, post__user=user) |
                                                    Q(id__in=read_comment_ids, parent__user=user))
