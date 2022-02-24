@@ -7,6 +7,7 @@ from django.views.generic import DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
+from likes.models import LikeDislike
 from notifications.models import Notification
 from posts.models import Post
 from users.models import User
@@ -80,17 +81,27 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
                                                               status=Notification.NotificationStatus.READ)
             unread_comment_notifications = notifications.filter(content_type__model='comment',
                                                                 status=Notification.NotificationStatus.UNREAD)
+            read_like_notifications = notifications.filter(content_type__model='likedislike',
+                                                           status=Notification.NotificationStatus.READ)
+            unread_like_notifications = notifications.filter(content_type__model='likedislike',
+                                                             status=Notification.NotificationStatus.UNREAD)
 
             read_comment_ids = [n.object_id for n in read_comment_notifications]
             unread_comment_ids = [n.object_id for n in unread_comment_notifications]
+            read_likes_ids = [n.object_id for n in read_like_notifications]
+            unread_likes_ids = [n.object_id for n in unread_like_notifications]
 
             read_comments = Comment.objects.filter(Q(id__in=read_comment_ids, parent__isnull=True, post__user=user) |
                                                    Q(id__in=read_comment_ids, parent__user=user))
             unread_comments = Comment.objects.filter(Q(id__in=unread_comment_ids, parent__isnull=True, post__user=user) |
                                                      Q(id__in=unread_comment_ids, parent__user=user))
+            read_likes = LikeDislike.objects.filter(id__in=read_likes_ids)
+            unread_likes = LikeDislike.objects.filter(id__in=unread_likes_ids)
 
             kwargs['read_comments'] = read_comments
             kwargs['unread_comments'] = unread_comments
+            kwargs['read_likes'] = read_likes
+            kwargs['unread_likes'] = unread_likes
 
         kwargs['section'] = section
 

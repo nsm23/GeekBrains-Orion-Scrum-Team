@@ -17,6 +17,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
+        context['likes_count'] = self.object.votes.sum_rating()
         return context
 
 

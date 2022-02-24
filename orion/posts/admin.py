@@ -11,4 +11,5 @@ class PostAdmin(admin.ModelAdmin):
         models.TextField: {'widget': TinyMCE()}
     }
 
+
 admin.site.register(Post, PostAdmin)
