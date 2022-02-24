@@ -167,15 +167,13 @@ function like() {
     const pk = like.data('id');
     const action = like.data('action');
     const dislike = like.next();
-    console.log(like)
     $.ajax({
         url: "/" + type + "/" + pk + "/" + action + "/",
         type: 'POST',
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            like.find("[data-count='like']").text(json.like_count);
-            dislike.find("[data-count='dislike']").text(json.dislike_count);
+          $("#likes-total").text(JSON.parse(json).sum_rating)
         }
 
     });
@@ -195,8 +193,7 @@ function dislike() {
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            dislike.find("[data-count='dislike']").text(json.dislike_count);
-            like.find("[data-count='like']").text(json.like_count);
+            $("#likes-total").text(JSON.parse(json).sum_rating)
         }
     });
 

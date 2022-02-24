@@ -1,0 +1,13 @@
+<li class="list-group-item d-flex justify-content-between px-0">
+    <div class="col-2">
+        <img src="{{ comment.user.avatar.url }}" class="w-75 rounded-circle">
+    </div>
+    <div class="col-10">
+        <div>
+          <strong>Пользователь @{{ like.user.username }}</strong> оценил вашу статью
+          <a href="{% url 'posts:detail' slug=like.content_object.slug %}">
+             "{{like.content_object.title}}"
+          </a>
+        </div>
+    </div>
+</li>

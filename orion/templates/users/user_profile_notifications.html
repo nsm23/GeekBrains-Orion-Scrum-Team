@@ -12,4 +12,11 @@
             {% include "users/user_profile_notifications_single.html" with comment=comment%}
         {% endfor %}
     {% endif %}
+    {% if unread_likes %}
+        <h3>Новые лайки</h3>
+        {% for like in unread_likes %}
+            {% include "users/user_profile_notification_like.html" with like=like%}
+        {% endfor %}
+    {% endif %}
+
 </ul>
