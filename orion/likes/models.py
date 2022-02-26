@@ -37,9 +37,5 @@ class LikeDislike(models.Model):
 
     objects = LikeDislikeManager()
 
-
-
-
-
-
-
+    def __str__(self):
+        return f'{self.vote} of user:{self.user} for {self.content_type} "{self.content_object}"'

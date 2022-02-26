@@ -1,22 +1,23 @@
 {% extends "layouts/main.html" %}
+
+{% block title %} Хаб | {{object.hub.title}} | {{object.title}} {% endblock %}
+
 {% block content %}
     {% comment %} <h1>Страница просмотра поста</h1> {% endcomment %}
 
     <div class="card mb-3">
         {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
         <div class="card-body">
-            <h2 class="card-title">{{ post.title }}</h2>
-            {% load humanize %}
-            <h6 class="card-subtitle mb-2 text-muted">
-                <a href="{% url 'users:user_profile' pk=post.user.pk section='user_detail' %}">@{{ post.user.username }}</a>
-                написал статью
-                {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at }}</h6>
-            <p class="card-text">{{ post.text|linebreaks }}</p>
-            {% load humanize %}
+          <h2 class="card-title">{{ post.title }}</h2>
+          {% load humanize %}
+          <h6 class="card-subtitle mb-2 text-muted">
+              <a href="{% url 'users:user_profile' pk=post.user.pk section='user_detail' %}">@{{ post.user.username }}</a> написал статью
+              {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|date:"j M Y" }}</h6>
+          <p class="card-text">{{ post.text|safe }}</p>
+          {% load humanize %}
         </div>
     </div>
-    {% include '../likes/likedislike.html' %}
-    {% include "../comments/list.html" %}
-
+    {% include 'likes/likedislike.html' %}
+    {% include "comments/list.html" %}
 
 {% endblock %}

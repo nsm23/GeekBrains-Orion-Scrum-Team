@@ -1,0 +1,22 @@
+<h2 class="mb-3">{{ subtitle }}</h2>
+<ul class="list-group list-group-flush px-0">
+    {% if unread_comments %}
+        <h3>Непрочитанные комментарии </h3>
+        {% for comment in unread_comments %}
+            {% include "users/user_profile_notifications_single.html" with comment=comment%}
+        {% endfor %}
+    {% endif %}
+    {% if read_comments %}
+        <h3>Прочитанные комментарии </h3>
+        {% for comment in read_comments %}
+            {% include "users/user_profile_notifications_single.html" with comment=comment%}
+        {% endfor %}
+    {% endif %}
+    {% if unread_likes %}
+        <h3>Новые лайки</h3>
+        {% for like in unread_likes %}
+            {% include "users/user_profile_notification_like.html" with like=like%}
+        {% endfor %}
+    {% endif %}
+
+</ul>

@@ -1,6 +1,7 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from pytils.translit import slugify
 from django.core.files.storage import FileSystemStorage
@@ -10,16 +11,13 @@ from posts.models import Post
 
 
 class PostDetailView(DetailView):
-
     model = Post
     template_name = 'posts/index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_hub'] = self.object.hub.alias
-        context['page_title'] = 'Хаб | ' + self.object.hub.title + ' | Просмотр поста — ' + self.object.title
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
-
+        context['likes_count'] = self.object.votes.sum_rating()
         return context
 
 
@@ -46,13 +44,19 @@ class PostCreateView(CreateView):
                                             kwargs={'pk': self.request.user.id, 'section': 'user_drafts'}))
 
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'posts/post_form.html'
     fields = ['title', 'brief_text', 'text', 'image', 'hub', 'status']
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+    def has_permission(self):
+        if self.request.user.is_anonymous:
+            return False
+        post = Post.objects.get(slug=self.kwargs.get('slug'))
+        if self.request.user.pk != post.user.pk and not self.request.user.is_superuser:
+            self.raise_exception = True
+            return False
+        return True
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -76,7 +80,16 @@ class PostUpdateView(UpdateView):
                                             kwargs={'pk': self.request.user.id, 'section': 'user_drafts'}))
 
 
-class PostDeleteView(DeleteView):
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('main')
     template_name = 'posts/post_delete.html'
+
+    def has_permission(self):
+        if self.request.user.is_anonymous:
+            return False
+        post = Post.objects.get(slug=self.kwargs.get('slug'))
+        if self.request.user.pk != post.user.pk and not self.request.user.is_superuser:
+            self.raise_exception = True
+            return False
+        return True

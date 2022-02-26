@@ -50,3 +50,26 @@ body {
 .navbar a:hover .bi-person-circle {
   color: rgba(0,0,0,.7);
 }
+
+.like-panel {
+  margin: 10px;
+}
+
+.btn-like{
+  width: 75px;
+}
+
+.btn-dislike {
+  width: 50px;
+}
+
+.likes-total{
+  border: none;
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  padding: none;
+  width: auto;
+  background-color: inherit;
+  width: 15px;
+}

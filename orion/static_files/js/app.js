@@ -147,21 +147,33 @@ validate_comment_text = function (elem) {
     $(elem).closest('.comment-form').find('.btn-comment-save').attr('disabled', invalid)
 }
 
+tinyMCE.init({
+    selector: '.tinymce',
+    theme : "silver",
+    height: 500,
+    menubar: false,
+    language : 'ru',
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+});
+
 function like() {
     const like = $(this);
     const type = like.data('type');
     const pk = like.data('id');
     const action = like.data('action');
     const dislike = like.next();
-    console.log(like)
     $.ajax({
         url: "/" + type + "/" + pk + "/" + action + "/",
         type: 'POST',
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            like.find("[data-count='like']").text(json.like_count);
-            dislike.find("[data-count='dislike']").text(json.dislike_count);
+          $("#likes-total").text(JSON.parse(json).sum_rating)
         }
 
     });
@@ -181,8 +193,7 @@ function dislike() {
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            dislike.find("[data-count='dislike']").text(json.dislike_count);
-            like.find("[data-count='like']").text(json.like_count);
+            $("#likes-total").text(JSON.parse(json).sum_rating)
         }
     });
 
@@ -195,4 +206,3 @@ $(function () {
     $('[data-action="like"]').click(like);
     $('[data-action="dislike"]').click(dislike);
 });
-

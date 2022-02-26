@@ -31,6 +31,11 @@ class Notification(models.Model):
         notification.save()
 
     @staticmethod
+    def delete_notification(content_type, object_id):
+        notification = Notification.objects.get(content_type=content_type, object_id=object_id)
+        notification.delete()
+
+    @staticmethod
     def mark_notifications_read(notifications: List[Notification]):
         for notification in notifications:
             notification.status = Notification.NotificationStatus.READ
