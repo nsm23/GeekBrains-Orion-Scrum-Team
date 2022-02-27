@@ -25,7 +25,12 @@ class VotesView(View):
             if likedislike.vote is not self.vote_type:
                 likedislike.vote = self.vote_type
                 likedislike.save(update_fields=['vote'])
-                Notification.create_notification(ContentType.objects.get(model='likedislike'), likedislike.id)
+                Notification.create_notification(
+                    content_type=ContentType.objects.get(model='likedislike'),
+                    object_id=likedislike.id,
+                    user_id=request.user.id,
+                    target_user_id=obj.user.id,
+                )
                 result = True
             else:
                 likedislike.delete()
@@ -33,7 +38,12 @@ class VotesView(View):
                 result = False
         except ObjectDoesNotExist:
             likedislike = obj.votes.create(user=request.user, vote=self.vote_type)
-            Notification.create_notification(ContentType.objects.get(model='likedislike'), likedislike.id)
+            Notification.create_notification(
+                content_type=ContentType.objects.get(model='likedislike'),
+                object_id=likedislike.id,
+                user_id=request.user.id,
+                target_user_id=obj.user.id,
+            )
             result = True
         return HttpResponse(
             json.dumps(

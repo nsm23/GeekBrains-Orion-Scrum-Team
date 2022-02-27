@@ -24,7 +24,13 @@ class JsonableResponseMixin:
 
             self.object = form.save()
             if self.object.post.user.id != self.request.user.id:
-                Notification().create_notification(ContentType.objects.get(model='comment'), self.object.id)
+                target_user_id = self.object.parent.user_id if self.object.parent else self.object.post.user.id
+                Notification().create_notification(
+                    content_type=ContentType.objects.get(model='comment'),
+                    object_id=self.object.id,
+                    user_id=self.request.user.id,
+                    target_user_id=target_user_id,
+                )
 
             if 'parent' in self.request.POST and int(self.request.POST['parent']) > 0:
                 template = 'reply.html'
