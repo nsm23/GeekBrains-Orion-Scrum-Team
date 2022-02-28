@@ -9,16 +9,21 @@ from django.urls import reverse, reverse_lazy
 
 from .models import Notification
 from comments.models import Comment
+from likes.models import LikeDislike
 from notifications.models import Notification
 
 
 @login_required(login_url=reverse_lazy('users:login'))
 def get_notifications(request):
-    comment_ids = Notification.objects.filter(
+    notifications = Notification.objects.filter(
         target_user=request.user,
         status=Notification.NotificationStatus.UNREAD,
-        content_type__model='comment').values_list('object_id')
-    comments = Comment.objects.filter(id__in=comment_ids,).order_by('-modified_at')
+    )
+    comment_ids = notifications.filter(content_type__model='comment').values_list('object_id')
+    likes_ids = notifications.filter(content_type__model='likedislike').values_list('object_id')
+
+    comments = Comment.objects.filter(id__in=comment_ids).order_by('-modified_at')
+    likes = LikeDislike.objects.filter(id__in=likes_ids)
 
     response_comments = [{
             'user_id': comment.user.id,
@@ -31,8 +36,10 @@ def get_notifications(request):
             'comment_id': comment.id,
         } for comment in comments[:3]
     ]
+    response_likes = [{}]
     return JsonResponse({'comments': response_comments,
-                         'notifications_count': len(comments),
+                         'likes': response_likes,
+                         'notifications_count': len(comments) + len(likes),
                          'current_user_id': request.user.id})
 
 
