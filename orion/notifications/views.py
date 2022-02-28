@@ -3,8 +3,9 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 
 from .models import Notification
 from comments.models import Comment
@@ -41,3 +42,13 @@ def mark_as_read(request):
     notifications = Notification.objects.filter(object_id__in=ids)
     Notification.mark_notifications_read(notifications)
     return JsonResponse({'ids': ids})
+
+
+@require_http_methods(["GET"])
+@login_required(login_url=reverse_lazy('users:login'))
+def mark_as_read_and_redirect(request, object_id):
+    notification = get_object_or_404(Notification, object_id=object_id)
+    if notification.content_type.model == 'comment':
+        comment = get_object_or_404(Comment, pk=notification.object_id)
+        slug = comment.post.slug
+        return redirect(reverse('posts:detail', kwargs={'slug': slug}) + f'#comment-{comment.id}')
