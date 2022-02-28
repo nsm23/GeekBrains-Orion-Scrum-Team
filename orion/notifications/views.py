@@ -14,10 +14,12 @@ from notifications.models import Notification
 
 @login_required(login_url=reverse_lazy('users:login'))
 def get_notifications(request):
-    notifications = Notification.objects.filter(status=Notification.NotificationStatus.UNREAD)
-    comment_ids = [n.object_id for n in notifications.filter(content_type__model='comment')]
-    comments = Comment.objects.filter(Q(id__in=comment_ids, parent__isnull=True, post__user=request.user) |
-                                      Q(id__in=comment_ids, parent__user=request.user))
+    comment_ids = Notification.objects.filter(
+        target_user=request.user,
+        status=Notification.NotificationStatus.UNREAD,
+        content_type__model='comment').values_list('object_id')
+    comments = Comment.objects.filter(id__in=comment_ids,).order_by('-modified_at')
+
     response_comments = [{
             'user_id': comment.user.id,
             'username': comment.user.username,
@@ -49,6 +51,7 @@ def mark_as_read(request):
 def mark_as_read_and_redirect(request, object_id):
     notification = get_object_or_404(Notification, object_id=object_id)
     if notification.content_type.model == 'comment':
+        Notification.mark_notifications_read([notification])
         comment = get_object_or_404(Comment, pk=notification.object_id)
         slug = comment.post.slug
         return redirect(reverse('posts:detail', kwargs={'slug': slug}) + f'#comment-{comment.id}')
