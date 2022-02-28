@@ -9,7 +9,7 @@
     <form action="." method="post">
         {{ form_reg | crispy }}
         {% csrf_token %}
-        <p><input type="submit" value="Create my account"></p>
+        <p><input type="submit" value="Create my account" class="btn btn-secondary"></p>
     </form>
     <p>Если у вас уже есть аккаунт, то <a href="{% url 'cabinet:login' %}">авторизируйтесь</a></p>
 {% endblock %}
