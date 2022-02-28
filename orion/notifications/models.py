@@ -6,6 +6,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from users.models import User
+
 
 class Notification(models.Model):
 
@@ -17,16 +19,30 @@ class Notification(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     status = models.CharField(max_length=8, choices=NotificationStatus.choices, default=NotificationStatus.UNREAD)
+    user = models.ForeignKey(
+        User,
+        verbose_name='Автор',
+        on_delete=models.CASCADE,
+        related_name='notifications_author',
+    )
+    target_user = models.ForeignKey(
+        User,
+        verbose_name='Адресат',
+        on_delete=models.CASCADE,
+        related_name='notifications_target',
+    )
 
     def __str__(self):
         return f'notification of {self.content_object} {self.object_id}'
 
     @staticmethod
-    def create_notification(content_type, object_id):
+    def create_notification(content_type, object_id, user_id, target_user_id):
         notification = Notification(
             content_type=content_type,
             object_id=object_id,
             status=Notification.NotificationStatus.UNREAD,
+            user_id=user_id,
+            target_user_id=target_user_id
         )
         notification.save()
 
