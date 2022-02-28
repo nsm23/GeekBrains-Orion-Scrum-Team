@@ -68,8 +68,125 @@ const markNotificationRead = event => {
     }
 }
 
+`
+<li class="row mb-2">
+    <div class="col-2 text-center py-2">
+        <img class="w-75 rounded-circle"
+             src="/media/avatars/1_knXJc0PyM5n7OaGnJi79EQ.png">
+    </div>
+    <div class="col-8">
+        <div>Пользователю <a href="/cabinet/3/user_detail/" class="text-dark">@marya</a>
+            понравилась ваша публикация.</div>
+    </div>
+    <div class="col-2">
+        <a title="Прочитано" data-is-read="false" data-comment-id="29" class="text-secondary">
+            <i class="bi bi-check-circle-fill"></i>
+        </a>
+        <a href="/notifications/mark-as-read/29/" title="Перейти к комментарию"
+            class="text-secondary">
+            <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+    </div>
+</li>
+`
 
-const generateCommentNotification = (username, user_id, user_img_url, text, dateTime, comment_id, post_slug) => {
+const generateAvatarDiv = (user_img_url) => {
+    let div = document.createElement("div");
+    div.classList.add("col-2", "text-center", "py-2");
+
+    let img = document.createElement('img');
+    img.classList.add("w-75", "rounded-circle");
+    img.setAttribute("src", user_img_url);
+    div.appendChild(img);
+
+    return div;
+}
+
+const generateCommentDiv = (username, user_id, user_img_url, text, dateTime) => {
+    let div = document.createElement("div");
+    div.classList.add("col-8");
+
+    let aUser = document.createElement("a");
+    let user_url = USER_PROFILE_URL.replace("{{id}}", user_id)
+    aUser.setAttribute("href", user_url);
+    aUser.classList.add("text-dark");
+    aUser.textContent = "@" + username;
+    div.appendChild(aUser);
+
+    let divDate = document.createElement("div");
+    divDate.classList.add("mt-2");
+    let dateSmall = document.createElement("small");
+    dateSmall.textContent = dateTime;
+    divDate.appendChild(dateSmall);
+    div.appendChild(divDate);
+
+    let divText = document.createElement("div");
+    divText.textContent = text;
+    div.appendChild(divText);
+
+    return div;
+}
+
+const generateLinksDiv = (username, user_id, user_img_url, text, dateTime, comment_id) => {
+    let div = document.createElement("div");
+    div.classList.add("col-2");
+
+    let aCommentRead = document.createElement("a");
+    aCommentRead.setAttribute("title", "Прочитано");
+    aCommentRead.setAttribute("data-is-read", "false");
+    aCommentRead.setAttribute("data-comment-id", comment_id);
+    aCommentRead.classList.add("text-secondary");
+    aCommentRead.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+    aCommentRead.addEventListener("click", event => {
+        event.preventDefault();
+        markNotificationRead(event);
+    });
+    div.appendChild(aCommentRead);
+
+    let aCommentLink = document.createElement("a");
+    aCommentLink.href = NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace("{{id}}", comment_id);
+    aCommentLink.setAttribute("title", "Перейти к комментарию");
+    aCommentLink.classList.add("text-secondary");
+    aCommentLink.innerHTML = ' <i class="bi bi-box-arrow-up-right"></i>';
+    div.appendChild(aCommentLink);
+
+    return div;
+}
+
+
+const generateNotification = (username, user_id, user_img_url, text, dateTime, comment_id) => {
+    let li = document.createElement("li");
+    li.classList.add("row", "mb-2");
+
+    let avatarDiv = generateAvatarDiv(user_img_url);
+    li.appendChild(avatarDiv);
+
+    let commentDiv = generateCommentDiv(username, user_id, user_img_url, text, dateTime);
+    li.appendChild(commentDiv);
+
+    let linksDiv = generateLinksDiv(username, user_id, user_img_url, text, dateTime, comment_id);
+    li.appendChild(linksDiv);
+
+    return li;
+}
+
+const generateLikeNotification = (username, user_id, user_img_url) => {
+    let li = document.createElement("li");
+    li.classList.add("row", "mb-2");
+
+    // div block: user avatar
+    let div1 = document.createElement("div");
+    div1.classList.add("col-2", "text-center", "py-2");
+
+    let img = document.createElement('img');
+    img.classList.add("w-75", "rounded-circle");
+    img.setAttribute("src", user_img_url);
+
+    div1.appendChild(img);
+    li.appendChild(div1);
+}
+
+const generateCommentNotification = (username, user_id, user_img_url, text, dateTime, comment_id) => {
     let li = document.createElement("li");
     li.classList.add("row", "mb-2");
 
