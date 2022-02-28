@@ -75,28 +75,25 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
         elif section == 'user_drafts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.DRAFT)
         elif section == 'user_notifications':
-            notifications = Notification.objects.all()
+            notifications = Notification.objects.filter(target_user=user)
 
-            read_comment_notifications = notifications.filter(content_type__model='comment',
-                                                              status=Notification.NotificationStatus.READ)
-            unread_comment_notifications = notifications.filter(content_type__model='comment',
-                                                                status=Notification.NotificationStatus.UNREAD)
-            read_like_notifications = notifications.filter(content_type__model='likedislike',
-                                                           status=Notification.NotificationStatus.READ)
-            unread_like_notifications = notifications.filter(content_type__model='likedislike',
-                                                             status=Notification.NotificationStatus.UNREAD)
+            read_comment_ids = (notifications
+                                .filter(content_type__model='comment', status=Notification.NotificationStatus.READ)
+                                .values_list('object_id'))
+            unread_comment_ids = (notifications
+                                  .filter(content_type__model='comment', status=Notification.NotificationStatus.UNREAD)
+                                  .values_list('object_id'))
+            read_like_ids = (notifications
+                             .filter(content_type__model='likedislike', status=Notification.NotificationStatus.READ)
+                             .values_list('object_id'))
+            unread_like_ids = (notifications
+                               .filter(content_type__model='likedislike', status=Notification.NotificationStatus.UNREAD)
+                               .values_list('object_id'))
 
-            read_comment_ids = [n.object_id for n in read_comment_notifications]
-            unread_comment_ids = [n.object_id for n in unread_comment_notifications]
-            read_likes_ids = [n.object_id for n in read_like_notifications if n.content_object.user != user]
-            unread_likes_ids = [n.object_id for n in unread_like_notifications if n.content_object.user != user]
-
-            read_comments = Comment.objects.filter(Q(id__in=read_comment_ids, parent__isnull=True, post__user=user) |
-                                                   Q(id__in=read_comment_ids, parent__user=user))
-            unread_comments = Comment.objects.filter(Q(id__in=unread_comment_ids, parent__isnull=True, post__user=user) |
-                                                     Q(id__in=unread_comment_ids, parent__user=user))
-            read_likes = LikeDislike.objects.filter(id__in=read_likes_ids)
-            unread_likes = LikeDislike.objects.filter(id__in=unread_likes_ids)
+            read_comments = Comment.objects.filter(id__in=read_comment_ids)
+            unread_comments = Comment.objects.filter(id__in=unread_comment_ids)
+            read_likes = LikeDislike.objects.filter(id__in=read_like_ids)
+            unread_likes = LikeDislike.objects.filter(id__in=unread_like_ids)
 
             kwargs['read_comments'] = read_comments
             kwargs['unread_comments'] = unread_comments
