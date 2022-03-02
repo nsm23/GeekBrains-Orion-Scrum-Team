@@ -25,12 +25,13 @@ class VotesView(View):
             if likedislike.vote is not self.vote_type:
                 likedislike.vote = self.vote_type
                 likedislike.save(update_fields=['vote'])
-                Notification.create_notification(
-                    content_type=ContentType.objects.get(model='likedislike'),
-                    object_id=likedislike.id,
-                    user_id=request.user.id,
-                    target_user_id=obj.user.id,
-                )
+                if not Notification.objects.filter(content_type__model='likedislike', user_id=request.user.id).count():
+                    Notification.create_notification(
+                        content_type=ContentType.objects.get(model='likedislike'),
+                        object_id=likedislike.id,
+                        user_id=request.user.id,
+                        target_user_id=obj.user.id,
+                    )
                 result = True
             else:
                 likedislike.delete()

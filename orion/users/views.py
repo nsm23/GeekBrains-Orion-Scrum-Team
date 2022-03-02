@@ -1,6 +1,5 @@
 from django.contrib import auth
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
@@ -74,7 +73,7 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.ACTIVE)
         elif section == 'user_drafts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.DRAFT)
-        elif section == 'user_notifications':
+        elif section == 'user_comment_notifications':
             notifications = Notification.objects.filter(target_user=user)
 
             read_comment_ids = (notifications
@@ -83,6 +82,13 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
             unread_comment_ids = (notifications
                                   .filter(content_type__model='comment', status=Notification.NotificationStatus.UNREAD)
                                   .values_list('object_id'))
+            read_comments = Comment.objects.filter(id__in=read_comment_ids)
+            unread_comments = Comment.objects.filter(id__in=unread_comment_ids)
+
+            kwargs['read_comments'] = read_comments
+            kwargs['unread_comments'] = unread_comments
+        elif section == 'user_like_notifications':
+            notifications = Notification.objects.filter(target_user=user)
             read_like_ids = (notifications
                              .filter(content_type__model='likedislike', status=Notification.NotificationStatus.READ)
                              .values_list('object_id'))
@@ -90,16 +96,11 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
                                .filter(content_type__model='likedislike', status=Notification.NotificationStatus.UNREAD)
                                .values_list('object_id'))
 
-            read_comments = Comment.objects.filter(id__in=read_comment_ids)
-            unread_comments = Comment.objects.filter(id__in=unread_comment_ids)
             read_likes = LikeDislike.objects.filter(id__in=read_like_ids)
             unread_likes = LikeDislike.objects.filter(id__in=unread_like_ids)
 
-            kwargs['read_comments'] = read_comments
-            kwargs['unread_comments'] = unread_comments
             kwargs['read_likes'] = read_likes
             kwargs['unread_likes'] = unread_likes
-
         kwargs['section'] = section
 
         return super().get_context_data(**kwargs)
