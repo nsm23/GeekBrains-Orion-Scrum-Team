@@ -42,6 +42,7 @@ def get_notifications(request):
             'user_avatar_url': like.user.avatar.url,
             'like_id': like.id,
             'vote': like.vote,
+            'post_slug': like.posts.get_queryset()[0].slug,
         } for like in likes[:3]
     ]
     return JsonResponse({'comments': response_comments,
