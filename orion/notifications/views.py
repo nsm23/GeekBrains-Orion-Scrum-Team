@@ -42,6 +42,7 @@ def get_notifications(request):
             'user_avatar_url': like.user.avatar.url,
             'like_id': like.id,
             'vote': like.vote,
+            'post_slug': like.posts.get_queryset()[0].slug,
         } for like in likes[:3]
     ]
     return JsonResponse({'comments': response_comments,
@@ -62,14 +63,14 @@ def mark_as_read(request):
 
 @require_http_methods(["GET"])
 @login_required(login_url=reverse_lazy('users:login'))
-def mark_as_read_and_redirect(request, object_id, object_model):
+def mark_as_read_and_redirect(request, object_id):
     notification = get_object_or_404(Notification, object_id=object_id)
-    if object_model == 'comment':
+    if notification.content_type.model == 'comment':
         Notification.mark_notifications_read([notification])
         comment = get_object_or_404(Comment, pk=object_id)
         slug = comment.post.slug
         return redirect(reverse('posts:detail', kwargs={'slug': slug}) + f'#comment-{comment.id}')
-    if object_model == 'likedislike':
+    if notification.content_type.model == 'likedislike':
         Notification.mark_notifications_read([notification])
         post = get_object_or_404(Post, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': post.slug}))

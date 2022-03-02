@@ -3,8 +3,7 @@
 
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
-const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{id}}/{{model}}/";
-const POST_URL = "/posts/{{slug}}/"
+const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{id}}/";
 const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
 const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_notifications/"
 
@@ -89,8 +88,7 @@ const commentNotificationTemplate = (comment) => {
                         class="text-secondary">
                     <i class="bi bi-check-circle-fill mark-as-read"></i>
                 </a>
-                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}', 
-                            comment.comment_id).replace('{{model}}', 'comment') }"
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',comment.comment_id) }"
                     title="Перейти к комментарию" class="text-secondary">
                         <i class="bi bi-box-arrow-up-right"></i>
                 </a>
@@ -126,8 +124,7 @@ const likeNotificationTemplate = (like) => {
                 <a title="Прочитано" data-is-read="false" data-object-id="${ like.like_id }" class="text-secondary">
                     <i class="bi bi-check-circle-fill mark-as-read"></i>
                 </a>
-                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace(
-                    '{{id}}',like.like_id).replace('{{model}}', 'likedislike')  }"
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',like.like_id) }"
                     title="Перейти к публикации" class="text-secondary" href="">
                     <i class="bi bi-box-arrow-up-right"></i>
                 </a>
@@ -159,7 +156,7 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
         notificationsCounterSpan.textContent = notifications_count;
 
     notificationsUl.innerHTML = '';
-    if (comments) {
+    if (comments.length > 0) {
         notificationsUl.innerHTML += "<h5 class='mt-3'>Новые комментарии</h5>";
 
         for (let comment of comments) {
@@ -167,7 +164,7 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
             notificationsUl.innerHTML += commentLi;
         }
     }
-    if (likes) {
+    if (likes.length > 0) {
         notificationsUl.innerHTML += "<h5 class='mt-3'>Новые отклики</h5>";
         for (let like of likes)
             notificationsUl.innerHTML += likeNotificationTemplate(like);
