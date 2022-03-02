@@ -61,8 +61,8 @@ const markNotificationRead = event => {
                     const notificationsCounterSpan = document.querySelector('#notifications-counter');
                     let count = +notificationsCounterSpan.textContent - 1;
                     notificationsCounterSpan.textContent = count > 0 ? count : "";
-                    a.classList.remove("text-dark");
-                    a.classList.add("text-success");
+                    a.classList.remove("btn-outline-secondary");
+                    a.classList.add("btn-success");
                     a.setAttribute("title", "Не прочитано");
                     a.setAttribute("data-is-read", "true");
                 }
@@ -84,13 +84,14 @@ const commentNotificationTemplate = (comment) => {
                 <div>${ comment.text }</div>
             </div>
             <div class="col-2">
-                <a title="Прочитано" data-is-read="false" data-object-id="${ comment.comment_id }"
-                        class="text-secondary">
-                    <i class="bi bi-check-circle-fill mark-as-read"></i>
+                <a title="Прочитано" class="btn btn-sm btn-outline-secondary m-1" 
+                    data-is-read="false" data-object-id="${ comment.comment_id }">
+                        <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
                 <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',comment.comment_id).replace('{{model}}', 'comment') }"
-                    title="Перейти к комментарию" class="text-secondary">
-                        <i class="bi bi-box-arrow-up-right"></i>
+                    class="btn btn-sm btn-outline-secondary m-1" 
+                    title="Перейти к комментарию">
+                        <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
                 </a>
             </div>
         </li>
@@ -121,12 +122,12 @@ const likeNotificationTemplate = (like) => {
                 <div class="${ className }">${ text }</div>
             </div>
             <div class="col-2">
-                <a title="Прочитано" data-is-read="false" data-object-id="${ like.like_id }" class="text-secondary">
-                    <i class="bi bi-check-circle-fill mark-as-read"></i>
+                <a title="Прочитано" data-is-read="false" data-object-id="${ like.like_id }" class="btn btn-sm btn-outline-secondary m-1">
+                    <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
                 <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',like.like_id).replace('{{model}}', 'likedislike') }"
-                    title="Перейти к публикации" class="text-secondary" href="">
-                    <i class="bi bi-box-arrow-up-right"></i>
+                    title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
+                    <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
                 </a>
             </div>
         </li>

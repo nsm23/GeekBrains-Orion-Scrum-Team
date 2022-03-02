@@ -17,7 +17,8 @@
         </div>
     </div>
     <div class="col-2">
-        <a href="" class="btn btn-sm btn-outline-secondary" title="Пометить прочтенным" onclick="markAsRead()">
-            <i class="bi bi-check-circle-fill"></i></a>
+        <a href="" class="btn btn-sm btn-outline-secondary" title="Пометить прочтенным"
+            data-is-read="false" data-object-id="{{ comment.id }}">
+                <i class="bi bi-check-circle-fill mark-as-read"></i></a>
     </div>
 </li>
