@@ -3,7 +3,7 @@
 
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
-const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{id}}/";
+const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{model}}/{{id}}/";
 const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
 const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_notifications/"
 
@@ -88,7 +88,7 @@ const commentNotificationTemplate = (comment) => {
                         class="text-secondary">
                     <i class="bi bi-check-circle-fill mark-as-read"></i>
                 </a>
-                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',comment.comment_id) }"
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',comment.comment_id).replace('{{model}}', 'comment') }"
                     title="Перейти к комментарию" class="text-secondary">
                         <i class="bi bi-box-arrow-up-right"></i>
                 </a>
@@ -124,7 +124,7 @@ const likeNotificationTemplate = (like) => {
                 <a title="Прочитано" data-is-read="false" data-object-id="${ like.like_id }" class="text-secondary">
                     <i class="bi bi-check-circle-fill mark-as-read"></i>
                 </a>
-                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',like.like_id) }"
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',like.like_id).replace('{{model}}', 'likedislike') }"
                     title="Перейти к публикации" class="text-secondary" href="">
                     <i class="bi bi-box-arrow-up-right"></i>
                 </a>

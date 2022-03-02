@@ -10,7 +10,6 @@ from .models import Notification
 from comments.models import Comment
 from likes.models import LikeDislike
 from notifications.models import Notification
-from posts.models import Post
 
 
 @login_required(login_url=reverse_lazy('users:login'))
@@ -30,7 +29,6 @@ def get_notifications(request):
             'username': comment.user.username,
             'user_avatar_url': comment.user.avatar.url,
             'post_id': comment.post.id,
-            'post_slug': comment.post.slug,
             'text': comment.text,
             'created_at': comment.created_at,
             'comment_id': comment.id,
@@ -42,7 +40,7 @@ def get_notifications(request):
             'user_avatar_url': like.user.avatar.url,
             'like_id': like.id,
             'vote': like.vote,
-            'post_slug': like.posts.get_queryset()[0].slug,
+            'post_id': like.object_id,
         } for like in likes[:3]
     ]
     return JsonResponse({'comments': response_comments,
@@ -63,15 +61,15 @@ def mark_as_read(request):
 
 @require_http_methods(["GET"])
 @login_required(login_url=reverse_lazy('users:login'))
-def mark_as_read_and_redirect(request, object_id):
-    notification = get_object_or_404(Notification, object_id=object_id)
-    if notification.content_type.model == 'comment':
-        Notification.mark_notifications_read([notification])
+def mark_as_read_and_redirect(request, object_id, object_model):
+    notification = Notification.objects.filter(object_id=object_id, content_type__model=object_model)
+    if object_model == 'comment':
+        Notification.mark_notifications_read(notification)
         comment = get_object_or_404(Comment, pk=object_id)
         slug = comment.post.slug
         return redirect(reverse('posts:detail', kwargs={'slug': slug}) + f'#comment-{comment.id}')
-    if notification.content_type.model == 'likedislike':
-        Notification.mark_notifications_read([notification])
-        post = get_object_or_404(Post, pk=object_id)
-        return redirect(reverse('posts:detail', kwargs={'slug': post.slug}))
+    if object_model == 'likedislike':
+        Notification.mark_notifications_read(notification)
+        like = get_object_or_404(LikeDislike, pk=object_id)
+        return redirect(reverse('posts:detail', kwargs={'slug': like.content_object.slug}))
     raise Http404
