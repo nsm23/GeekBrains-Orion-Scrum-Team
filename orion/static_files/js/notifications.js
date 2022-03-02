@@ -1,5 +1,6 @@
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
+const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{id}}/";
 const POST_URL = "/posts/{{slug}}/"
 const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
 const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_notifications/"
@@ -126,8 +127,7 @@ const generateCommentNotification = (username, user_id, user_img_url, text, date
     div3.appendChild(aCommentRead);
 
     let aCommentLink = document.createElement("a");
-    let commentUrl = `${ POST_URL.replace("{{slug}}", post_slug) }#comment-${ comment_id }`
-    aCommentLink.setAttribute("href", commentUrl);
+    aCommentLink.href = NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace("{{id}}", comment_id);
     aCommentLink.setAttribute("title", "Перейти к комментарию");
     aCommentLink.classList.add("text-secondary");
     aCommentLink.innerHTML = ' <i class="bi bi-box-arrow-up-right"></i>';
