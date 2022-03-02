@@ -5,7 +5,7 @@ const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
 const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{model}}/{{id}}/";
 const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
-const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_notifications/"
+const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_comment_notifications/"
 
 
 function getCookie(name) {
@@ -165,12 +165,13 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
         }
     }
     if (likes.length > 0) {
-        notificationsUl.innerHTML += "<h5 class='mt-3'>Новые отклики</h5>";
+        notificationsUl.innerHTML += "<h5 class='mt-3'>Новые оценки</h5>";
         for (let like of likes)
             notificationsUl.innerHTML += likeNotificationTemplate(like);
     }
     notificationsUl.innerHTML += AllNotificationsLinkTemplate(current_user_id);
 }
+
 
 document.addEventListener("DOMContentLoaded", event => {
     const request = new Request(NOTIFICATIONS_HEADER_URL);
