@@ -41,6 +41,7 @@ def get_notifications(request):
             'like_id': like.id,
             'vote': like.vote,
             'post_id': like.object_id,
+            'post_title': like.content_object.title,
         } for like in likes[:3]
     ]
     return JsonResponse({'comments': response_comments,
