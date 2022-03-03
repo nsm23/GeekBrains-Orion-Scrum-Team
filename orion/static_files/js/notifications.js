@@ -83,7 +83,7 @@ const commentNotificationTemplate = (comment) => {
                 <div class="mt-2"><small>${ comment.created_at }</small></div>
                 <div>${ comment.text }</div>
             </div>
-            <div class="col-2">
+            <div class="col-2 d-flex flex-column justify-content-center">
                 <a title="Прочитано" class="btn btn-sm btn-outline-secondary m-1" 
                     data-is-read="false" data-object-id="${ comment.comment_id }">
                         <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
@@ -103,11 +103,11 @@ const likeNotificationTemplate = (like) => {
     let text = '';
     let className = '';
     if (like.vote === 1) {
-        text = `<small><i class="bi bi-hand-thumbs-up-fill"></i></small> Понравилась ваша публикация`;
+        text = `<small><i class="bi bi-hand-thumbs-up-fill"></i></small> Понравилась ваша публикация "${like.post_title}"`;
         className = 'text-success';
     }
     else if (like.vote === -1) {
-        text = `<small><i class="bi bi-hand-thumbs-down-fill"></i></small> Не понравилась ваша публикация`;
+        text = `<small><i class="bi bi-hand-thumbs-down-fill"></i></small> Не понравилась ваша публикация "${like.post_title}`;
         className = 'text-danger';
     }
 
@@ -121,7 +121,7 @@ const likeNotificationTemplate = (like) => {
                     @${ like.username }</a>
                 <div class="${ className }">${ text }</div>
             </div>
-            <div class="col-2">
+            <div class="col-2 d-flex flex-column justify-content-center">
                 <a title="Прочитано" data-is-read="false" data-object-id="${ like.like_id }" class="btn btn-sm btn-outline-secondary m-1">
                     <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
