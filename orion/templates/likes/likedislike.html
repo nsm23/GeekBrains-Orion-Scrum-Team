@@ -1,20 +1,22 @@
 <div class="col-sm-8 like-panel">
-  Оцените статью:
-  <button class="btn btn-success btn-like"
-          data-id="{{ post.id }}"
-          data-type="posts"
-          data-action="like"
-          title="like">
-    <i class="bi bi-hand-thumbs-up"
-       id="likes-total"
-    >{% if object.votes.count != 0 %}{{ likes_count }}{% endif %}</i>
-  </button>
 
-  <button class="btn btn-danger  btn-dislike"
-          data-id="{{ post.id }}"
-          data-type="posts"
-          data-action="dislike"
-          title="dislike">
-    <i class="bi bi-hand-thumbs-down"></i>
-  </button>
+    <button class="btn btn-success btn-like"
+            data-id="{{ post.id }}"
+            data-type="posts"
+            data-action="like"
+            title="like">
+        <i class="bi bi-hand-thumbs-up" data-count="like">{{ like_obj.votes.likes.count }}</i>
+    </button>
+
+    <button class="btn btn-primary">
+        votes<span class="badge badge-light" id="like-total">{{ likes_count }}</span>
+    </button>
+
+    <button class="btn btn-danger  btn-dislike"
+            data-id="{{ post.id }}"
+            data-type="posts"
+            data-action="dislike"
+            title="dislike">
+        <i class="bi bi-hand-thumbs-down" data-count="dislike">{{ like_obj.votes.dislikes.count }}</i>
+    </button>
 </div>
