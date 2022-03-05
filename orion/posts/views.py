@@ -29,7 +29,12 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         publish = 'publish' in self.request.POST
-        self.object.status = Post.ArticleStatus.MODERATION if publish else Post.ArticleStatus.DRAFT
+        if not publish:
+            self.object.status = Post.ArticleStatus.DRAFT
+        elif self.object.user.rating >= 7:
+            self.object.status = Post.ArticleStatus.ACTIVE
+        else:
+            self.object.status = Post.ArticleStatus.MODERATION
         self.object.slug = slugify(self.object.title + str(self.object.id))
         self.object.user = self.request.user
         if 'image' in self.request:
