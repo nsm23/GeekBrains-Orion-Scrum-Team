@@ -15,6 +15,8 @@ class Post(models.Model):
         MODERATION = 'ON MODERATION', _('ON MODERATION')
         DELETED = 'DELETED', _('DELETED')
 
+    MIN_USER_RATING_TO_PUBLISH = 7
+
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     slug = models.SlugField(verbose_name='Элиас для урла')
     text = models.TextField(verbose_name='Полный текст')
