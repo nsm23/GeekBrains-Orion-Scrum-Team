@@ -28,6 +28,7 @@ urlpatterns = [
     path('comments/', include('comments.urls', namespace='comments')),
     path('cabinet/', include('users.urls', namespace='cabinet')),
     path('notifications/', include('notifications.urls', namespace='notifications')),
+    path('moderation/', include('moderation.urls', namespace='moderation')),
     path('', include('likes.urls', namespace='likes'))
 ]
 

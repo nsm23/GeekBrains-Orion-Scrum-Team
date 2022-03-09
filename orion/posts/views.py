@@ -3,7 +3,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from pytils.translit import slugify
 from django.core.files.storage import FileSystemStorage
 
