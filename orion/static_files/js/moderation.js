@@ -29,9 +29,16 @@ document.addEventListener('DOMContentLoaded', event => {
                     if ("error" in response)
                         console.log("Post approving error: " + response["error"])
                     else {
-                        a.classList.add('disabled');
-                        a.classList.remove('btn-outline-success');
-                        a.classList.add('btn-outline-secondary');
+                        let innerBtns = a.parentElement.querySelectorAll('a');
+
+                        console.log(innerBtns);
+                        for (let inner_btn of innerBtns) {
+                            inner_btn.classList.remove('btn-outline-success');
+                            inner_btn.classList.remove('btn-outline-danger');
+                            inner_btn.classList.add('disabled');
+                            inner_btn.classList.add('btn-outline-secondary');
+                            inner_btn.blur();
+                        }
                     }
                 })
                 .catch(
