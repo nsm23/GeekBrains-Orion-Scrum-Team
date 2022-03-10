@@ -13,9 +13,10 @@ class PostModerationListView(ListView):
     queryset = Post.objects.filter(status=Post.ArticleStatus.MODERATION)
 
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET', 'POST'])
 def approve_post_publishing(request, post_id):
     # ToDo: implement access rules
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.ACTIVE
+    post.save()
     return JsonResponse({'post_id': post_id}, status=200)

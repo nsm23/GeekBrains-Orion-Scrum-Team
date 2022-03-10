@@ -1,7 +1,6 @@
 "use strict";
 
 
-
 const POST_APPROVE_URL = "/moderation/posts/approve/{{post_id}}/";
 
 
@@ -26,9 +25,15 @@ document.addEventListener('DOMContentLoaded', event => {
 
             let a = event.target.closest("a");
             postApproveFetch(a.dataset.postId)
-                .then(
-
-                )
+                .then(response => {
+                    if ("error" in response)
+                        console.log("Post approving error: " + response["error"])
+                    else {
+                        a.classList.add('disabled');
+                        a.classList.remove('btn-outline-success');
+                        a.classList.add('btn-outline-secondary');
+                    }
+                })
                 .catch(
 
                 );
