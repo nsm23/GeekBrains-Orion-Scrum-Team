@@ -13,6 +13,7 @@ class Post(models.Model):
         DRAFT = 'DRAFT', _('DRAFT'),
         ACTIVE = 'ACTIVE', _('ACTIVE'),
         MODERATION = 'ON MODERATION', _('ON MODERATION')
+        DECLINED = 'DECLINED', _('DECLINED')
         DELETED = 'DELETED', _('DELETED')
 
     MIN_USER_RATING_TO_PUBLISH = 7

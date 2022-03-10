@@ -20,3 +20,12 @@ def approve_post_publishing(request, post_id):
     post.status = Post.ArticleStatus.ACTIVE
     post.save()
     return JsonResponse({'post_id': post_id}, status=200)
+
+
+@require_http_methods(['GET', 'POST'])
+def decline_post_publishing(request, post_id):
+    # ToDo: implement access rules
+    post = get_object_or_404(Post, id=post_id)
+    post.status = Post.ArticleStatus.DECLINED
+    post.save()
+    return JsonResponse({'post_id': post_id}, status=200)
