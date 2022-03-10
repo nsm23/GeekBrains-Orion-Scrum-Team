@@ -3,5 +3,30 @@
 {% block title %}Статьи на модерации{% endblock %}
 
 {% block content %}
-    <h1>Модерация</h1>
+    <h1 class="mb-5">Модерация публикаций</h1>
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>Статья</th>
+            <th>Автор</th>
+            <th></th>
+        </tr>
+        {% for post in posts %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url "posts:detail" slug=post.slug %}">{{ post.title }}</a></td>
+                <td>{{ post.user }}</td>
+                <td>
+                    <a href="" class="btn btn-outline-success" title="Опубликовать">
+                        <i class="bi bi-check-circle-fill"></i></a>
+                    <a href="" class="btn btn-outline-danger" title="Отклонить">
+                        <i class="bi bi-x-circle-fill"></i></a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">На модерации нет ни одной публикации</td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
