@@ -15,9 +15,9 @@
               {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|date:"j M Y" }}</h6>
           <p class="card-text">{{ post.text|safe }}</p>
           {% load humanize %}
+        {% include 'likes/likedislike.html' %}
         </div>
     </div>
-    {% include 'likes/likedislike.html' %}
     {% include "comments/list.html" %}
 
 {% endblock %}
