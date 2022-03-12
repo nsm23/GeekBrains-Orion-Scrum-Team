@@ -2,7 +2,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from pytils.translit import slugify
 from django.core.files.storage import FileSystemStorage
 
@@ -13,6 +13,16 @@ from posts.models import Post
 class PostDetailView(DetailView):
     model = Post
     template_name = 'posts/index.html'
+
+    def get_object(self, queryset=None):
+        post = super(PostDetailView, self).get_object(queryset)
+        # only author and staff can see inactive post (draft, on moderation, etc)
+        if post.status != 'ACTIVE':
+            user = self.request.user
+            # ToDo: change access rules after user groups implementation
+            if user.is_anonymous or not (user == post.user or user.is_staff):
+                raise Http404
+        return post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
