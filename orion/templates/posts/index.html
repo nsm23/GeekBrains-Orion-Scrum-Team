@@ -5,21 +5,39 @@
 {% block content %}
     {% comment %} <h1>Страница просмотра поста</h1> {% endcomment %}
 
-    {#  ToDo: add access rules  #}
-    <div class="card mb-3">
-        <div class="card-header bg-white p-0 text-end dropdown">
-            <a href="javascript:void(0)" id="dropdownPost{{ post.id }}" data-bs-toggle="dropdown"
-               aria-expanded="false" class="btn">
-                <i class="bi bi-three-dots"></i>
-            </a>
-            <ul class="dropdown-menu shadow" aria-labelledby="dropdownMenuClickableOutside"
-                style="top: 2rem; right: 0; left: unset; z-index: 2000">
-                {# ToDo: use different access rules for different states #}
-                <li><a class="dropdown-item" href="#">Одобрить публикацию</a></li>
-                <li><a class="dropdown-item" href="#">Отклонить публикацию</a></li>
-                <li><a class="dropdown-item" href="#">Заблокировать публикацию</a></li>
-            </ul>
-        </div>
+    <div class="card mb-3 {% if post.status == 'DECLINED' or post.status == 'BANNED' %}border-danger border-3{% endif %}">
+        {#  ToDo: update access rules  #}
+        {% if request.user == post.user or request.user.is_staff %}
+            <div class="card-header bg-white p-0 text-end dropdown">
+                {% if post.status == 'DECLINED' %}
+                    <span class="text-danger">Запрос на публикацию отклонен модератором</span>
+                {% endif %}
+                {% if post.status == 'BANNED' %}
+                    <span class="text-danger">Публикация заблокирована</span>
+                {% endif %}
+                <a href="javascript:void(0)" id="dropdownPost{{ post.id }}" data-bs-toggle="dropdown"
+                   aria-expanded="false" class="btn">
+                    <i class="bi bi-three-dots"></i>
+                </a>
+                <ul class="dropdown-menu shadow" aria-labelledby="dropdownMenuClickableOutside"
+                    style="top: 2rem; right: 0; left: unset; z-index: 2000">
+                    {% if request.user == post.user %}
+                        <li><a href="{% url 'posts:edit' slug=post.slug %}" class="dropdown-item">
+                            Редактировать</a></li>
+                    {% endif %}
+                    {% if post.status == 'ON MODERATION' %}
+                        <li><a class="dropdown-item post-approve-link" data-post-id="{{ post.id }}" href="#">
+                            Одобрить публикацию</a></li>
+                        <li><a class="dropdown-item post-decline-link" data-post-id="{{ post.id }}" href="#">
+                            Отклонить публикацию</a></li>
+                    {% endif %}
+                    {% if post.status == 'ACTIVE' %}
+                        <li><a class="dropdown-item post-ban-link" data-post-id="{{ post.id }}" href="#">
+                            Заблокировать публикацию</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
 
         {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
         <div class="card-body">
@@ -35,4 +53,9 @@
     {% include 'likes/likedislike.html' %}
     {% include "comments/list.html" %}
 
+{% endblock %}
+
+{% block scripts %}
+    {% load static %}
+    <script src="{% static "js/moderation.js" %}"></script>
 {% endblock %}

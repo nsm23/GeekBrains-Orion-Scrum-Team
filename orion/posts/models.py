@@ -15,6 +15,7 @@ class Post(models.Model):
         MODERATION = 'ON MODERATION', _('ON MODERATION')
         DECLINED = 'DECLINED', _('DECLINED')
         DELETED = 'DELETED', _('DELETED')
+        BANNED = 'BANNED', _('BANNED')
 
     MIN_USER_RATING_TO_PUBLISH = 7
 

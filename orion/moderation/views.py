@@ -13,7 +13,7 @@ class PostModerationListView(ListView):
     queryset = Post.objects.filter(status=Post.ArticleStatus.MODERATION)
 
 
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(['POST'])
 def approve_post_publishing(request, post_id):
     # ToDo: implement access rules
     post = get_object_or_404(Post, id=post_id)
@@ -22,10 +22,19 @@ def approve_post_publishing(request, post_id):
     return JsonResponse({'post_id': post_id}, status=200)
 
 
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(['POST'])
 def decline_post_publishing(request, post_id):
     # ToDo: implement access rules
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.DECLINED
+    post.save()
+    return JsonResponse({'post_id': post_id}, status=200)
+
+
+@require_http_methods(['POST'])
+def ban_post(request, post_id):
+    # ToDo: implement access rules
+    post = get_object_or_404(Post, id=post_id)
+    post.status = Post.ArticleStatus.BANNED
     post.save()
     return JsonResponse({'post_id': post_id}, status=200)

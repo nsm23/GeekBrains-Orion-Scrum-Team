@@ -8,4 +8,5 @@ urlpatterns = [
     path('posts/', views.PostModerationListView.as_view(), name='posts_on_moderation'),
     path('posts/approve/<int:post_id>/', views.approve_post_publishing, name='post_approve'),
     path('posts/decline/<int:post_id>/', views.decline_post_publishing, name='post_decline'),
+    path('posts/ban/<int:post_id>/', views.ban_post, name='post_ban'),
 ]
