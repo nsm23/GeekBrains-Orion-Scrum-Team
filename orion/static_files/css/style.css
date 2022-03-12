@@ -41,13 +41,11 @@ body {
   font-size: 1.5rem;
 }
 
-.navbar a .bi-pencil-fill,
-.navbar a .bi-person-circle {
+.navbar a .bi {
   color: rgba(0,0,0,.55);
 }
 
-.navbar a:hover .bi-pencil-fill,
-.navbar a:hover .bi-person-circle {
+.navbar a:hover .bi {
   color: rgba(0,0,0,.7);
 }
 
