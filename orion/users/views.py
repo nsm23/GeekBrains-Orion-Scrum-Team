@@ -73,6 +73,8 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.ACTIVE)
         elif section == 'user_drafts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.DRAFT)
+        elif section == 'user_moderation_posts':
+            kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.MODERATION)
         elif section == 'user_comment_notifications':
             notifications = Notification.objects.filter(target_user=user)
 

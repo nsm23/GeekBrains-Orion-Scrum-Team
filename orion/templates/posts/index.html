@@ -15,6 +15,7 @@
               {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|date:"j M Y" }}</h6>
           <div class="card-text">{{ post.text|safe }}</div>
           {% load humanize %}
+        {% include 'likes/likedislike.html' %}
         </div>
       <button id="speech"
               class="speech-button"
@@ -24,7 +25,6 @@
       </button>
       <div id="audio-container"></div>
     </div>
-    {% include 'likes/likedislike.html' %}
     {% include "comments/list.html" %}
 
 {% endblock %}
