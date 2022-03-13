@@ -3,6 +3,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from pytils.translit import slugify
 from django.core.files.storage import FileSystemStorage
 
@@ -29,7 +30,18 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         publish = 'publish' in self.request.POST
-        self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
+        if publish and self.request.user.rating >= Post.MIN_USER_RATING_TO_PUBLISH:
+            action = 'publish'
+            self.object.status = Post.ArticleStatus.ACTIVE
+            redirect_name, section = 'main', None
+        elif publish:
+            action = 'moderation'
+            self.object.status = Post.ArticleStatus.MODERATION
+            redirect_name, section = 'cabinet:user_profile', 'user_moderation_posts'
+        else:
+            action = 'draft'
+            self.object.status = Post.ArticleStatus.DRAFT
+            redirect_name, section = 'cabinet:user_profile', 'user_drafts'
         self.object.slug = slugify(self.object.title + str(self.object.id))
         self.object.user = self.request.user
         if 'image' in self.request:
@@ -38,10 +50,9 @@ class PostCreateView(CreateView):
             fs.save(post_image.name, post_image)
 
         self.object.save()
-        if publish:
+        if action == 'publish':
             return HttpResponseRedirect(reverse('main'))
-        return HttpResponseRedirect(reverse('cabinet:user_profile',
-                                            kwargs={'pk': self.request.user.id, 'section': 'user_drafts'}))
+        return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
 
 
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
