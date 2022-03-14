@@ -201,10 +201,34 @@ function dislike() {
     return false;
 }
 
+function speech() {
+  const slug = $(this).data('id');
+  const textToSpeech = $('.card-text').text();
+  const spinner = $('#spinner')
+
+  spinner.addClass('fa fa-spinner fa-spin')
+
+  $.ajax({
+      url: "/posts/speech/" + slug,
+      type: 'POST',
+      data: {
+        'csrfmiddlewaretoken': Cookies.get('csrftoken'),
+        'text': textToSpeech,
+    },
+    success: function (speechFilePath) {
+      spinner.removeClass( "fa fa-spinner fa-spin" )
+      file = window.location.origin + '/media/' + speechFilePath
+
+      const audio = $(`<audio controls><source id="source" src="${file}" type="audio/mpeg">Your browser does not support the audio element.</audio>`)
+      $("#audio-container").append(audio)
+    }
+  });
+}
+
 
 // Подключение обработчиков
 $(function () {
     $('[data-action="like"]').click(like);
     $('[data-action="dislike"]').click(dislike);
+    $('[data-action="speech"]').click(speech);
 });
-
