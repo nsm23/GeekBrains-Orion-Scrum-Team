@@ -37,9 +37,12 @@ def get_notifications(request):
         ).values_list('object_id')
         posts_to_moderate = Post.objects.filter(id__in=post_ids)
         response_posts_to_moderate = [{
+            'post_id': post.id,
             'post_slug': post.slug,
             'post_title': post.title,
             'post_user_id': post.user.id,
+            'username': post.user.username,
+            'user_avatar_url': post.user.avatar.url,
         } for post in posts_to_moderate[:POST_MODERATION_NOTIFICATIONS_NUMBER_TO_SHOW]]
         response_notifications = {
             'posts_to_moderate': response_posts_to_moderate,
@@ -90,13 +93,15 @@ def mark_as_read(request):
 @login_required(login_url=reverse_lazy('users:login'))
 def mark_as_read_and_redirect(request, object_id, object_model):
     notification = Notification.objects.filter(object_id=object_id, content_type__model=object_model)
+    Notification.mark_notifications_read(notification)
     if object_model == 'comment':
-        Notification.mark_notifications_read(notification)
         comment = get_object_or_404(Comment, pk=object_id)
         slug = comment.post.slug
         return redirect(reverse('posts:detail', kwargs={'slug': slug}) + f'#comment-{comment.id}')
     if object_model == 'likedislike':
-        Notification.mark_notifications_read(notification)
         like = get_object_or_404(LikeDislike, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': like.content_object.slug}))
+    if object_model == 'post':
+        post = get_object_or_404(Post, pk=object_id)
+        return redirect(reverse('posts:detail', kwargs={'slug': post.slug}))
     raise Http404

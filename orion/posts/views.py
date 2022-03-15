@@ -1,13 +1,12 @@
-from gtts import gTTS
-from django.urls import reverse, reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 
+from gtts import gTTS
 from pytils.translit import slugify
-from django.core.files.storage import FileSystemStorage
 
 from hub.models import Hub
 from likes.models import LikeDislike
