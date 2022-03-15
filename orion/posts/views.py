@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
@@ -24,7 +24,7 @@ class PostDetailView(DetailView):
         if post.status != 'ACTIVE':
             user = self.request.user
             # ToDo: change access rules after user groups implementation
-            if user.is_anonymous or not (user == post.user or user.is_staff):
+            if user != post.user and not user.is_staff:
                 raise Http404
         return post
 
