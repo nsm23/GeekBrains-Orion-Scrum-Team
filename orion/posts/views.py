@@ -1,14 +1,16 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.contenttypes.models import ContentType
-from django.core.files.storage import FileSystemStorage
-from django.http import Http404, HttpResponseRedirect
+from gtts import gTTS
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 from pytils.translit import slugify
+from django.core.files.storage import FileSystemStorage
 
 from hub.models import Hub
+from likes.models import LikeDislike
 from notifications.models import Notification
 from posts.models import Post
 
@@ -31,6 +33,11 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
+        try:
+            context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
+                                                                   object_id=self.object.id).vote
+        except LikeDislike.DoesNotExist:
+            pass
         return context
 
 
@@ -123,3 +130,18 @@ class PostDeleteView(PermissionRequiredMixin, DeleteView):
             self.raise_exception = True
             return False
         return True
+
+
+def text_to_voice_view(request, slug):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        text = text.replace(u'\xa0', ' ')
+        language = 'ru'
+
+        path = f'speech/{str(slug)}.mp3'
+        file = gTTS(text=text, lang=language, slow=False)
+
+        file.save('media/' + path)
+
+        return HttpResponse(path)
+    return HttpResponse()
