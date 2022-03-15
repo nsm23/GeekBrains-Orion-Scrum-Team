@@ -143,6 +143,17 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
 }
 
 
+const generateModerationNoitificationBar = (notifications_count, posts) => {
+    if (!notifications_count && !posts)
+        return ;
+    const moderNotificationCounterSpan = document.querySelector('#moderation-notifications-counter');
+    const moderNotificationsUl = document.querySelector('#moderation-notifications-ul');
+
+    if (notifications_count > 0)
+        moderNotificationCounterSpan.textContent = notifications_count;
+}
+
+
 document.addEventListener("DOMContentLoaded", event => {
     const request = new Request(NOTIFICATIONS_HEADER_URL);
     const options = {method: "GET", mode: "same-origin"};
@@ -158,6 +169,10 @@ document.addEventListener("DOMContentLoaded", event => {
                     response["likes"],
                     response["current_user_id"],
                     );
+                generateModerationNoitificationBar(
+                    response["posts_to_moderate_count"],
+                    response["posts_to_moderate"],
+                )
             }
         })
         .then(() => {

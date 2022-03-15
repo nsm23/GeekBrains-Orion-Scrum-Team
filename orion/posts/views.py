@@ -1,12 +1,15 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.contenttypes.models import ContentType
+from django.core.files.storage import FileSystemStorage
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.http import Http404, HttpResponseRedirect
+
 from pytils.translit import slugify
-from django.core.files.storage import FileSystemStorage
 
 from hub.models import Hub
+from notifications.models import Notification
 from posts.models import Post
 
 
@@ -61,6 +64,13 @@ class PostCreateView(CreateView):
         self.object.save()
         if action == 'publish':
             return HttpResponseRedirect(reverse('main'))
+        if action == 'moderation':
+            Notification.create_notification(
+                content_type=ContentType.objects.get(model='likedislike'),
+                object_id=self.object.id,
+                user_id=self.request.user.id,
+                target_user_id=None,
+            )
         return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
 
 

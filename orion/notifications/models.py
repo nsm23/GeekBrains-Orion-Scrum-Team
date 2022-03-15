@@ -30,6 +30,8 @@ class Notification(models.Model):
         verbose_name='Адресат',
         on_delete=models.CASCADE,
         related_name='notifications_target',
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
