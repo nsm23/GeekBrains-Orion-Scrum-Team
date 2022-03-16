@@ -1,6 +1,7 @@
 "use strict";
 
 
+const MODERATION_URL = "/moderation/posts/"
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
 const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{model}}/{{id}}/";
@@ -40,7 +41,7 @@ const markNotificationRead = event => {
 }
 
 
-const commentNotificationTemplate = (comment) => {
+const commentNotificationTemplate = comment => {
     return `
         <li class="row mb-2">
             <div class="col-2 text-center py-2">
@@ -68,7 +69,7 @@ const commentNotificationTemplate = (comment) => {
 }
 
 
-const likeNotificationTemplate = (like) => {
+const likeNotificationTemplate = like => {
     let text = '';
     let className = '';
     if (like.vote === 1) {
@@ -104,11 +105,51 @@ const likeNotificationTemplate = (like) => {
 }
 
 
+const moderationNotificationTemplate = post => {
+    return `
+        <li class="row mb-2">
+            <div class="col-2 text-center py-2">
+                <img class="w-75 rounded-circle" src="${ post.user_avatar_url }">
+            </div>
+            <div class="col-8">
+                <a href="${ USER_PROFILE_URL.replace('{{id}}', post.user_id) }" class="text-dark">
+                    @${ post.username }</a>
+                <div>
+                    Публикация "${ post.post_title }" ожидает Вашего одобрения.
+                </div>
+            </div>
+            <div class="col-2 d-flex flex-column justify-content-center">
+                <a title="Прочитано" data-is-read="false" data-object-id="${ post.post_id }" class="btn btn-sm btn-outline-secondary m-1">
+                    <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
+                </a>
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',post.post_id).replace('{{model}}', 'post') }"
+                    title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
+                    <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
 const AllNotificationsLinkTemplate = user_id => {
     return `
         <li class="row mt-4 mb-2">
             <div class="col text-center">
                 <a href="${ USER_PROFILE_NOTIFICATIONS_URL.replace("{{id}}", user_id) }" class="text-dark">
+                    Просмотреть все уведомления
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
+const ModerationLinkTemplate = () => {
+    return `
+        <li class="row mt-4 mb-2">
+            <div class="col text-center">
+                <a href="${ MODERATION_URL }" class="text-dark">
                     Просмотреть все уведомления
                 </a>
             </div>
@@ -143,6 +184,24 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
 }
 
 
+const generateModerationNoitificationBar = (notifications_count, posts) => {
+    const moderNotificationCounterSpan = document.querySelector('#moderation-notifications-counter');
+    const moderNotificationsUl = document.querySelector('#moderation-notifications-ul');
+
+    if (notifications_count > 0)
+        moderNotificationCounterSpan.textContent = notifications_count;
+
+    moderNotificationsUl.innerHTML = "";
+    if (posts.length > 0) {
+        moderNotificationsUl.innerHTML += "<h5 class='mt-3'>Публикации на модерацию</h5>";
+        for (let post of posts)
+            moderNotificationsUl.innerHTML += moderationNotificationTemplate(post);
+    }
+
+    moderNotificationsUl.innerHTML += ModerationLinkTemplate();
+}
+
+
 document.addEventListener("DOMContentLoaded", event => {
     const request = new Request(NOTIFICATIONS_HEADER_URL);
     const options = {method: "GET", mode: "same-origin"};
@@ -158,6 +217,10 @@ document.addEventListener("DOMContentLoaded", event => {
                     response["likes"],
                     response["current_user_id"],
                     );
+                generateModerationNoitificationBar(
+                    response["posts_to_moderate_count"],
+                    response["posts_to_moderate"],
+                )
             }
         })
         .then(() => {
