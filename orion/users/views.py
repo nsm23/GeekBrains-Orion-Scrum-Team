@@ -23,7 +23,6 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                # return HttpResponse('Authenticated successfully')
                 return HttpResponseRedirect(reverse_lazy('main'))
             else:
                 return HttpResponse('Disabled account')
@@ -136,3 +135,11 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
             self.raise_exception = True
             return False
         return True
+
+
+def set_status(request, pk, status):
+    if request.user.is_superuser:
+        user = User.objects.get(pk=pk)
+        user.is_staff = True if status == 'moderator' else False
+        user.save()
+    return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': pk}))

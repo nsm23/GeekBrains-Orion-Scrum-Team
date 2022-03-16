@@ -3,6 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from pytils.translit import slugify
@@ -20,11 +21,12 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
-        try:
-            context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
-                                                                   object_id=self.object.id).vote
-        except LikeDislike.DoesNotExist:
-            pass
+        if self.request.user != AnonymousUser():
+            try:
+                context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
+                                                                       object_id=self.object.id).vote
+            except LikeDislike.DoesNotExist:
+                pass
         return context
 
 
