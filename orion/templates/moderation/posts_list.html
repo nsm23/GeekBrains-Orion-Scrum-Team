@@ -18,15 +18,13 @@
                 <td><a href="{% url 'users:user_profile' section='user_detail' pk=post.user.id %}" class="text-dark">
                         @{{ post.user }}</a>
                 </td>
-                <td>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#decline-post">
-                        Launch
-                    </button>
+                <td id="moderation-btns-{{ post.id }}">
                     <a href="" class="btn btn-outline-success post-approve-btn"
                        title="Одобрить публикацию" data-post-id="{{ post.id }}">
                         <i class="bi bi-check-circle-fill"></i></a>
                     <a href="" class="btn btn-outline-danger post-decline-btn"
-                       title="Отклонить публикацию" data-post-id="{{ post.id }}">
+                       title="Отклонить публикацию" data-post-id="{{ post.id }}"
+                       data-bs-toggle="modal" data-bs-target="#decline-post">
                         <i class="bi bi-x-circle-fill"></i></a>
                 </td>
             </tr>

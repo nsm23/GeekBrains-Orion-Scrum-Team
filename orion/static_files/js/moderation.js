@@ -15,7 +15,7 @@ const getPostModerationURL = (post_id, action) => {
         return POST_BAN_URL.replace("{{post_id}}", post_id);
 }
 
-const postModerationFetch = (post_id, action) => {
+const postModerationFetch = (post_id, action, comment) => {
     let url = getPostModerationURL(post_id, action);
 
     const csrftoken = getCookie('csrftoken');
@@ -23,28 +23,31 @@ const postModerationFetch = (post_id, action) => {
     const options = {
         method: "POST",
         mode: "same-origin",
-        headers: {"X-CSRFToken": csrftoken, 'Content-Type': 'application/json'}
+        headers: {"X-CSRFToken": csrftoken, 'Content-Type': 'application/json'},
+        body: {'comment': comment},
     };
     return makeFetch(request, options);
 }
 
 
-const moderationBtnClick = (event, action) => {
+const moderationBtnClick = (event, action, comment) => {
     event.preventDefault();
 
-    let a = event.target.closest("a");
-    postModerationFetch(a.dataset.postId, action)
+    let postId = event.target.dataset.postId;
+    postModerationFetch(postId, action, comment)
         .then(response => {
             if ("error" in response)
                 console.log(`Post ${action} error: ${response["error"]}`)
             else {
-                let innerBtns = a.parentElement.querySelectorAll('a');
-                for (let inner_btn of innerBtns) {
-                    inner_btn.classList.remove('btn-outline-success');
-                    inner_btn.classList.remove('btn-outline-danger');
-                    inner_btn.classList.add('disabled');
-                    inner_btn.classList.add('btn-outline-secondary');
-                    inner_btn.blur();
+                let moderationBtns = document.querySelectorAll(`#moderation-btns-${ postId } a`);
+                console.log(`#moderation-btns-${ postId } a`)
+                console.log(moderationBtns)
+                for (let btn of moderationBtns) {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.remove('btn-outline-danger');
+                    btn.classList.add('disabled');
+                    btn.classList.add('btn-outline-secondary');
+                    btn.blur();
                 }
             }
         })
@@ -95,9 +98,14 @@ const moderationLinkClick = (event, action) => {
 const prepareModal = () => {
     const modalId = "decline-post";
     const modal = document.querySelector(`#${ modalId }`);
+    const input = modal.querySelector(`#${ modalId }-input`);
+
     modal.addEventListener("show.bs.modal", event => {
         let button = event.relatedTarget;
-        let postId = button.dataset.postId;
+
+        button.addEventListener("click", event => {
+            moderationBtnClick(event, "decline", input.value);
+        });
         let modalTitle = modal.querySelector(`#${ modalId }-title`)
         modalTitle.textContent = "Отклонить публикацию"
     })
@@ -111,14 +119,17 @@ document.addEventListener('DOMContentLoaded', event => {
     let postDeclineLinks = document.querySelectorAll('.post-decline-link');
     let postBanLinks = document.querySelectorAll('.post-ban-link');
 
+    // Buttons on moderation page
     for (let btn of postApproveBtns)
         btn.addEventListener("click", event => {
             moderationBtnClick(event, "approve");
         });
-    for (let btn of postDeclineBtns)
-        btn.addEventListener("click", event => {
-            moderationBtnClick(event, "decline");
-        });
+    // for (let btn of postDeclineBtns)
+    //     btn.addEventListener("click", event => {
+    //         moderationBtnClick(event, "decline");
+    //     });
+
+    // Links in moderation dropdown bar
     for (let link of postApproveLinks)
         link.addEventListener("click", event => {
             moderationLinkClick(event, "approve");
