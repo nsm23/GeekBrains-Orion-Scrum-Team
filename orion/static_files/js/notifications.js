@@ -105,7 +105,7 @@ const likeNotificationTemplate = like => {
 }
 
 
-const moderationNotificationTemplate = post => {
+const moderationRequestNotificationTemplate = post => {
     return `
         <li class="row mb-2">
             <div class="col-2 text-center py-2">
@@ -123,6 +123,42 @@ const moderationNotificationTemplate = post => {
                     <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
                 <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',post.post_id).replace('{{model}}', 'post') }"
+                    title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
+                    <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
+const moderationNotificationTemplate = obj => {
+    let text;
+    let className;
+
+    if (obj.content_type === "post") {
+        if (obj.decision === "APPROVE") {
+            text = `<i class="bi bi-check-lg"></i> Ваща публикация "${obj.text}" была одобрена.`;
+            className = "text-success";
+        }
+        else if (obj.decision === "DECLINE") {
+            text = `<i class="bi bi-x-lg"></i>Модератор отклонил вашу публикацию "${obj.text}" с комментарием:<br>"${obj.comment}".`
+            className = "text-danger";
+        }
+    }
+    else
+        return;
+
+    return `
+        <li class="row mb-2">
+            <div class="col-10">
+                <div class="${ className }">${ text }</div>
+            </div>
+            <div class="col-2 d-flex flex-column justify-content-center">
+                <a title="Прочитано" data-is-read="false" data-object-id="${ obj.object_id }" class="btn btn-sm btn-outline-secondary m-1">
+                    <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
+                </a>
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',obj.object_id).replace('{{model}}', obj.content_type) }"
                     title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
                     <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
                 </a>
@@ -158,10 +194,16 @@ const ModerationLinkTemplate = () => {
 }
 
 
-const generateNoificationsBar = (notifications_count, comments, likes, current_user_id) => {
+const generateNoificationsBar = (params) => {
+    // notifications_count, comments, likes, current_user_id
     const notificationsCounterSpan = document.querySelector('#notifications-counter');
     const notificationsUl = document.querySelector('#notifications-ul');
 
+    let notifications_count = params.notifications_count || 0;
+    let comments = params.comments || [];
+    let likes = params.likes || [];
+    let moderation_acts = params.moderation_acts || [];
+    let current_user_id = params.current_user_id;
 
     if (notifications_count > 0)
         notificationsCounterSpan.textContent = notifications_count;
@@ -180,6 +222,11 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
         for (let like of likes)
             notificationsUl.innerHTML += likeNotificationTemplate(like);
     }
+    if (moderation_acts > 0) {
+        notificationsUl.innerHTML += "<h5 class='mt-3'>Модерация</h5>";
+        for (let act of moderation_acts)
+            notificationsUl.innerHTML += moderationNotificationTemplate(act);
+    }
     notificationsUl.innerHTML += AllNotificationsLinkTemplate(current_user_id);
 }
 
@@ -195,7 +242,7 @@ const generateModerationNoitificationBar = (notifications_count, posts) => {
     if (posts.length > 0) {
         moderNotificationsUl.innerHTML += "<h5 class='mt-3'>Публикации на модерацию</h5>";
         for (let post of posts)
-            moderNotificationsUl.innerHTML += moderationNotificationTemplate(post);
+            moderNotificationsUl.innerHTML += moderationRequestNotificationTemplate(post);
     }
 
     moderNotificationsUl.innerHTML += ModerationLinkTemplate();
@@ -211,16 +258,18 @@ document.addEventListener("DOMContentLoaded", event => {
             if (response["error"])
                 console.log(response["error"])
             else {
-                generateNoificationsBar(
-                    response["notifications_count"],
-                    response["comments"],
-                    response["likes"],
-                    response["current_user_id"],
+                generateNoificationsBar({
+                    notifications_count: response["notifications_count"],
+                    comments: response["comments"],
+                    likes: response["likes"],
+                    moderation_acts: response["moderation_acts"],
+                    current_user_id: response["current_user_id"],
+                });
+                if (response["posts_to_moderate_count"] > 0)
+                    generateModerationNoitificationBar(
+                        response["posts_to_moderate_count"],
+                        response["posts_to_moderate"],
                     );
-                generateModerationNoitificationBar(
-                    response["posts_to_moderate_count"],
-                    response["posts_to_moderate"],
-                )
             }
         })
         .then(() => {

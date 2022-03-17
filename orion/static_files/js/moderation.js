@@ -92,6 +92,18 @@ const moderationLinkClick = (event, action) => {
 }
 
 
+const prepareModal = () => {
+    const modalId = "decline-post";
+    const modal = document.querySelector(`#${ modalId }`);
+    modal.addEventListener("show.bs.modal", event => {
+        let button = event.relatedTarget;
+        let postId = button.dataset.postId;
+        let modalTitle = modal.querySelector(`#${ modalId }-title`)
+        modalTitle.textContent = "Отклонить публикацию"
+    })
+}
+
+
 document.addEventListener('DOMContentLoaded', event => {
     let postApproveBtns = document.querySelectorAll('.post-approve-btn');
     let postDeclineBtns = document.querySelectorAll('.post-decline-btn');
@@ -119,4 +131,6 @@ document.addEventListener('DOMContentLoaded', event => {
         link.addEventListener("click", event => {
             moderationLinkClick(event, "ban");
         });
+
+    prepareModal();
 })
