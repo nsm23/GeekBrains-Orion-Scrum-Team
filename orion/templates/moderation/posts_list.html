@@ -19,6 +19,9 @@
                         @{{ post.user }}</a>
                 </td>
                 <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#decline-post">
+                        Launch
+                    </button>
                     <a href="" class="btn btn-outline-success post-approve-btn"
                        title="Одобрить публикацию" data-post-id="{{ post.id }}">
                         <i class="bi bi-check-circle-fill"></i></a>
@@ -33,6 +36,7 @@
             </tr>
         {% endfor %}
     </table>
+    {% include "controls/modal-1-input.html" with modal_id="decline-post" %}
 {% endblock %}
 
 {% block scripts %}

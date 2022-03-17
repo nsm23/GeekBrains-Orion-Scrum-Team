@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -6,6 +7,8 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.urls import reverse_lazy
 
+from moderation.models import Moderation
+from notifications.models import Notification
 from posts.models import Post
 
 
@@ -24,6 +27,19 @@ def approve_post_publishing(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.ACTIVE
     post.save()
+    moderation = Moderation(
+        moderator=request.user,
+        decision='APPROVE',
+        content_type=ContentType.objects.get(model='post'),
+        object_id=post.id,
+    )
+    moderation.save()
+    Notification.create_notification(
+        content_type=ContentType.objects.get(model='moderation'),
+        object_id=moderation.id,
+        user_id=request.user.id,
+        target_user_id=post.user.id,
+    )
     return JsonResponse({'post_id': post_id}, status=200)
 
 

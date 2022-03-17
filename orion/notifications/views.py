@@ -8,12 +8,14 @@ from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
 from likes.models import LikeDislike
+from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 
 COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW = 3
 LIKES_NOTIFICATIONS_NUMBER_TO_SHOW = 3
-POST_MODERATION_NOTIFICATIONS_NUMBER_TO_SHOW = 3
+POST_TO_MODERATOR_NUMBER_TO_SHOW = 3
+POST_MODERATION_RESULT_NUMBER_TO_SHOW = 3
 
 
 @login_required(login_url=reverse_lazy('users:login'))
@@ -24,9 +26,11 @@ def get_notifications(request):
     )
     comment_ids = notifications.filter(content_type__model='comment').values_list('object_id')
     likes_ids = notifications.filter(content_type__model='likedislike').values_list('object_id')
+    moderation_ids = notifications.filter(content_type__model='moderation').values_list('object_id')
 
     comments = Comment.objects.filter(id__in=comment_ids).order_by('-modified_at')
     likes = LikeDislike.objects.filter(id__in=likes_ids)
+    moderation_acts = Moderation.objects.filter(id__in=moderation_ids).order_by('-date')
 
     response_notifications = {}
     if request.user.is_staff:
@@ -43,12 +47,11 @@ def get_notifications(request):
             'post_user_id': post.user.id,
             'username': post.user.username,
             'user_avatar_url': post.user.avatar.url,
-        } for post in posts_to_moderate[:POST_MODERATION_NOTIFICATIONS_NUMBER_TO_SHOW]]
+        } for post in posts_to_moderate[:POST_TO_MODERATOR_NUMBER_TO_SHOW]]
         response_notifications = {
             'posts_to_moderate': response_posts_to_moderate,
             'posts_to_moderate_count': len(post_ids)
         }
-
 
     response_comments = [{
             'user_id': comment.user.id,
@@ -70,13 +73,21 @@ def get_notifications(request):
             'post_title': like.content_object.title,
         } for like in likes[:LIKES_NOTIFICATIONS_NUMBER_TO_SHOW]
     ]
+    response_moderations = [{
+            'object_id': mod.object_id,
+            'content_type': mod.content_type.model,
+            'decision': mod.decision,
+            'comment': mod.comment,
+            'text': mod.content_object.title if mod.content_object == 'post' else '',
+        } for mod in moderation_acts[:POST_TO_MODERATOR_NUMBER_TO_SHOW]]
 
-    return JsonResponse(dict({'comments': response_comments,
-                              'likes': response_likes,
-                              'notifications_count': len(comments) + len(likes),
-                              'current_user_id': request.user.id},
-                             **response_notifications
-                             ))
+    return JsonResponse(dict({
+        'comments': response_comments,
+        'likes': response_likes,
+        'moderation_acts': response_moderations,
+        'notifications_count': len(comments) + len(likes) + len(moderation_acts),
+        'current_user_id': request.user.id
+    }, **response_notifications))
 
 
 @require_http_methods(["POST"])

@@ -11,6 +11,7 @@ from pytils.translit import slugify
 
 from hub.models import Hub
 from likes.models import LikeDislike
+from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 
@@ -73,7 +74,7 @@ class PostCreateView(CreateView):
             return HttpResponseRedirect(reverse('main'))
         if action == 'moderation':
             Notification.create_notification(
-                content_type=ContentType.objects.get(model='likedislike'),
+                content_type=ContentType.objects.get(model='post'),
                 object_id=self.object.id,
                 user_id=self.request.user.id,
                 target_user_id=None,
