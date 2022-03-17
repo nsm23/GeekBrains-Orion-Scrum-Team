@@ -34,8 +34,8 @@ class VotesView(View):
                     )
                 result = True
             else:
-                likedislike.delete()
                 Notification.delete_notification(ContentType.objects.get(model='likedislike'), likedislike.id)
+                likedislike.delete()
                 result = False
         except ObjectDoesNotExist:
             likedislike = obj.votes.create(user=request.user, vote=self.vote_type)

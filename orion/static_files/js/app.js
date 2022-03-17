@@ -174,8 +174,9 @@ function like() {
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            $("#likes-total").text(json.sum_rating);
-
+            const data = JSON.parse(json)
+            const like_total = document.querySelector('#like-total');
+            like_total.innerHTML = data.sum_rating;
         }
 
     });
@@ -195,7 +196,9 @@ function dislike() {
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            $("#likes-total").text(json.sum_rating);
+            const data = JSON.parse(json);
+            const like_total = document.querySelector('#like-total');
+            like_total.innerHTML = data.sum_rating;
         }
     });
     return false;
