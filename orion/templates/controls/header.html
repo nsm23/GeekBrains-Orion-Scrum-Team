@@ -40,7 +40,6 @@
                         </a>
                         {#  MODERATION DROPDOWN  #}
                         {% if request.user.is_staff %}
-                            {#  ToDo: check rules after user groups implementation #}
                             <div class="dropdown me-3">
                                 <a href="javascript:void(0)" id="dropdownNotifications" data-bs-toggle="dropdown"
                                    aria-expanded="false" href="{% url 'moderation:posts_on_moderation' %}" title="Модерация">

@@ -151,7 +151,6 @@ const moderationNotificationTemplate = obj => {
     }
     else
         return;
-
     return `
         <li class="row mb-2">
             <div class="col-1 text-center ${className}">
@@ -284,7 +283,7 @@ document.addEventListener("DOMContentLoaded", event => {
                 let markAsReadBtns = document.querySelectorAll('.mark-as-read');
 
                 for (let btn of markAsReadBtns) {
-                    btn.addEventListener("click", event => {
+                    btn.closest('a').addEventListener("click", event => {
                         event.preventDefault();
 
                         markNotificationRead(event);

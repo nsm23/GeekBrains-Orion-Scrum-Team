@@ -25,7 +25,6 @@ class PostDetailView(DetailView):
         # only author and staff can see inactive post (draft, on moderation, etc)
         if post.status != 'ACTIVE':
             user = self.request.user
-            # ToDo: change access rules after user groups implementation
             if user != post.user and not user.is_staff:
                 raise Http404
         return post

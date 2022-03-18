@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
@@ -12,11 +13,12 @@ from notifications.models import Notification
 from posts.models import Post
 
 
-class PostModerationListView(ListView):
+class PostModerationListView(PermissionRequiredMixin, ListView):
     model = Post
     template_name = 'moderation/posts_list.html'
     context_object_name = 'posts'
     queryset = Post.objects.filter(status=Post.ArticleStatus.MODERATION)
+    login_url = reverse_lazy('users:login')
 
 
 @require_http_methods(['POST'])
