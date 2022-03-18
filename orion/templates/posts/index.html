@@ -4,7 +4,6 @@
 
 {% block content %}
     <div class="card mb-3 {% if post.status == 'DECLINED' or post.status == 'BANNED' %}border-danger border-3{% endif %}">
-        {#  ToDo: update access rules  #}
         {% if request.user == post.user or request.user.is_staff %}
             <div class="card-header bg-white p-0 text-end dropdown">
                 {% if post.status == 'DECLINED' %}
@@ -27,13 +26,16 @@
                     {% if post.status == 'ON MODERATION' %}
                         <li><a class="dropdown-item post-approve-link" data-post-id="{{ post.id }}" href="#">
                             Одобрить публикацию</a></li>
-                        <li><a class="dropdown-item post-decline-link" data-post-id="{{ post.id }}" href="#">
+                        <li><a class="dropdown-item post-decline-link" data-post-id="{{ post.id }}" href="#"
+                               data-post-id="{{ post.id }}" data-bs-toggle="modal" data-bs-target="#decline-post">
                             Отклонить публикацию</a></li>
                     {% endif %}
+                {% comment %}
                     {% if post.status == 'ACTIVE' %}
                         <li><a class="dropdown-item post-ban-link" data-post-id="{{ post.id }}" href="#">
                             Заблокировать публикацию</a></li>
                     {% endif %}
+                {% endcomment %}
                 </ul>
             </div>
         {% endif %}
@@ -69,6 +71,7 @@
         {% include "comments/list.html" %}
     {% endif %}
 
+    {% include "controls/modal-1-input.html" with modal_id="decline-post" %}
 {% endblock %}
 
 {% block scripts %}
