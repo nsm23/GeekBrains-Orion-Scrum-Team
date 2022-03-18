@@ -136,13 +136,21 @@ const moderationNotificationTemplate = obj => {
     let text;
     let className;
 
+    console.log(obj)
+    console.log(obj.object_id);
+    console.log(obj.content_type);
+    console.log(obj.decision);
+    console.log(obj.comment);
+    console.log(obj.text);
+
     if (obj.content_type === "post") {
         if (obj.decision === "APPROVE") {
             text = `<i class="bi bi-check-lg"></i> Ваща публикация "${obj.text}" была одобрена.`;
             className = "text-success";
         }
         else if (obj.decision === "DECLINE") {
-            text = `<i class="bi bi-x-lg"></i>Модератор отклонил вашу публикацию "${obj.text}" с комментарием:<br>"${obj.comment}".`
+            console.log('decline:', obj.comment)
+            text = `<i class="bi bi-x-lg"></i>Модератор отклонил вашу публикацию "${obj.text}" с комментарием:` + obj.comment;
             className = "text-danger";
         }
     }
@@ -222,7 +230,7 @@ const generateNoificationsBar = (params) => {
         for (let like of likes)
             notificationsUl.innerHTML += likeNotificationTemplate(like);
     }
-    if (moderation_acts > 0) {
+    if (moderation_acts.length > 0) {
         notificationsUl.innerHTML += "<h5 class='mt-3'>Модерация</h5>";
         for (let act of moderation_acts)
             notificationsUl.innerHTML += moderationNotificationTemplate(act);
@@ -234,6 +242,9 @@ const generateNoificationsBar = (params) => {
 const generateModerationNoitificationBar = (notifications_count, posts) => {
     const moderNotificationCounterSpan = document.querySelector('#moderation-notifications-counter');
     const moderNotificationsUl = document.querySelector('#moderation-notifications-ul');
+
+    if (!moderNotificationsUl)
+        return ;
 
     if (notifications_count > 0)
         moderNotificationCounterSpan.textContent = notifications_count;
@@ -258,6 +269,7 @@ document.addEventListener("DOMContentLoaded", event => {
             if (response["error"])
                 console.log(response["error"])
             else {
+                console.log(response["moderation_acts"])
                 generateNoificationsBar({
                     notifications_count: response["notifications_count"],
                     comments: response["comments"],

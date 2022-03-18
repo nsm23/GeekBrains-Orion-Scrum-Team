@@ -80,7 +80,6 @@ def get_notifications(request):
             'comment': mod.comment,
             'text': mod.content_object.title if mod.content_object == 'post' else '',
         } for mod in moderation_acts[:POST_TO_MODERATOR_NUMBER_TO_SHOW]]
-
     return JsonResponse(dict({
         'comments': response_comments,
         'likes': response_likes,
