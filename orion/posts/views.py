@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
@@ -11,7 +12,6 @@ from pytils.translit import slugify
 
 from hub.models import Hub
 from likes.models import LikeDislike
-from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 
@@ -33,11 +33,12 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
-        try:
-            context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
-                                                                   object_id=self.object.id).vote
-        except LikeDislike.DoesNotExist:
-            pass
+        if self.request.user != AnonymousUser():
+            try:
+                context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
+                                                                       object_id=self.object.id).vote
+            except LikeDislike.DoesNotExist:
+                pass
         return context
 
 

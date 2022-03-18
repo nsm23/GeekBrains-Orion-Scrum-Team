@@ -55,8 +55,17 @@
 
                         {% endif %}
                         <div class="dropdown">
-                            <a href="javascript:void(0)" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ request.user.avatar.url }}" class="rounded-circle" style="width: 2rem;" alt="@{{ request.user.username }}" title="@{{ request.user.username }}" />
+                            <a href="javascript:void(0)"
+                               id="dropdownMenuButton1"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false"
+                               class="profile-link">
+                                <img src="{{ request.user.avatar.url }}"
+                                     class="rounded-circle"
+                                     style="width: 2rem;"
+                                     alt="@{{ request.user.username }}"
+                                     title="@{{ request.user.username }}" />
+                                @{{request.user.username}}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="">
                                 <li class="px-3"><strong>@{{ request.user.username }}</strong></li>

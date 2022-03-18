@@ -90,3 +90,8 @@ body {
   margin-left: -12px;
   margin-right: 8px;
 }
+
+a.profile-link {
+  text-decoration: none;
+  color: inherit;
+}
