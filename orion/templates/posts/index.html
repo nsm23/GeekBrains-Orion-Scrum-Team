@@ -3,8 +3,6 @@
 {% block title %} Хаб | {{object.hub.title}} | {{object.title}} {% endblock %}
 
 {% block content %}
-    {% comment %} <h1>Страница просмотра поста</h1> {% endcomment %}
-
     <div class="card mb-3 {% if post.status == 'DECLINED' or post.status == 'BANNED' %}border-danger border-3{% endif %}">
         {#  ToDo: update access rules  #}
         {% if request.user == post.user or request.user.is_staff %}
@@ -19,6 +17,7 @@
                    aria-expanded="false" class="btn">
                     <i class="bi bi-three-dots"></i>
                 </a>
+                {#  Dropdown menu for post actions  #}
                 <ul class="dropdown-menu shadow" aria-labelledby="dropdownMenuClickableOutside"
                     style="top: 2rem; right: 0; left: unset; z-index: 2000">
                     {% if request.user == post.user %}
@@ -48,8 +47,14 @@
               {% if post.hub %}в хабе «{{ post.hub.title }}» {% endif %}{{ post.created_at|date:"j M Y" }}</h6>
           <div class="card-text">{{ post.text|safe }}</div>
           {% load humanize %}
-        {% include 'likes/likedislike.html' %}
+
+            {#  LIKES BAR  #}
+            {% if post.status == 'ACTIVE' %}
+                {% include 'likes/likedislike.html' %}
+            {% endif %}
         </div>
+
+    {#  TEXT VOICEOVER  #}
       <button id="speech"
               class="speech-button"
               data-action="speech"
@@ -58,7 +63,11 @@
       </button>
       <div id="audio-container"></div>
     </div>
-    {% include "comments/list.html" %}
+
+    {#  COMMENTS  #}
+    {% if post.status == 'ACTIVE' %}
+        {% include "comments/list.html" %}
+    {% endif %}
 
 {% endblock %}
 
