@@ -265,11 +265,10 @@ document.addEventListener("DOMContentLoaded", event => {
                     moderation_acts: response["moderation_acts"],
                     current_user_id: response["current_user_id"],
                 });
-                if (response["posts_to_moderate_count"] > 0)
-                    generateModerationNoitificationBar(
-                        response["posts_to_moderate_count"],
-                        response["posts_to_moderate"],
-                    );
+                generateModerationNoitificationBar(
+                    response["posts_to_moderate_count"],
+                    response["posts_to_moderate"],
+                );
             }
         })
         .then(() => {
