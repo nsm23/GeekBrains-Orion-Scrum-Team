@@ -150,7 +150,6 @@ validate_comment_text = function (elem) {
 tinyMCE.init({
     selector: '.tinymce',
     theme: "silver",
-    height: 500,
     menubar: false,
     language: 'ru',
     plugins: [

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'comments',
     'users',
     'likes',
+    'tags',
     'notifications',
     'crispy_forms',
     'crispy_bootstrap5',
