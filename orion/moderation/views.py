@@ -34,6 +34,16 @@ def approve_post_publishing(request, post_id):
         object_id=post.id,
     )
     moderation.save()
+
+    notifications = Notification.objects.filter(
+        content_type=ContentType.objects.get(model='post'),
+        object_id=post.id,
+        status=Notification.NotificationStatus.UNREAD,
+    )
+    for notification in notifications:
+        notification.status = Notification.NotificationStatus.READ
+    Notification.objects.bulk_update(notifications, ['status'])
+
     Notification.create_notification(
         content_type=ContentType.objects.get(model='moderation'),
         object_id=moderation.id,
@@ -51,6 +61,7 @@ def decline_post_publishing(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.DECLINED
     post.save()
+
     moderation = Moderation(
         moderator=request.user,
         decision=Moderation.ModerationDecision.DECLINE,
@@ -58,6 +69,16 @@ def decline_post_publishing(request, post_id):
         object_id=post.id,
     )
     moderation.save()
+
+    notifications = Notification.objects.filter(
+        content_type=ContentType.objects.get(model='post'),
+        object_id=post.id,
+        status=Notification.NotificationStatus.UNREAD,
+    )
+    for notification in notifications:
+        notification.status = Notification.NotificationStatus.READ
+    Notification.objects.bulk_update(notifications, ['status'])
+
     Notification.create_notification(
         content_type=ContentType.objects.get(model='moderation'),
         object_id=moderation.id,

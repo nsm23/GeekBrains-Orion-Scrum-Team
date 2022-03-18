@@ -82,6 +82,7 @@ class PostCreateView(CreateView):
         return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
 
 
+# ToDo: check, if post was declined previously !
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'posts/post_form.html'

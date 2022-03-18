@@ -1,11 +1,11 @@
 <h2 class="mb-3">{{ subtitle }}</h2>
 <table class="table">
+    <tr>
+        <th>#</th>
+        <th>Статья</th>
+        <th>Причина отклонения</th>
+    </tr>
     {% for post in posts %}
-        <tr>
-            <th>#</th>
-            <th>Статья</th>
-            <th>Причина отклонения</th>
-        </tr>
         <tr>
             <td>
                 {{ forloop.counter }}

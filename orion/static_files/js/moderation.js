@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', event => {
     for (let btn of postApproveBtns)
         btn.addEventListener("click", event => {
             event.preventDefault();
+
             moderationBtnClick(event.target.dataset.postId, "approve");
         });
 
