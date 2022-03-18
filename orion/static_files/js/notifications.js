@@ -192,7 +192,7 @@ const ModerationLinkTemplate = () => {
         <li class="row mt-4 mb-2">
             <div class="col text-center">
                 <a href="${ MODERATION_URL }" class="text-dark">
-                    Просмотреть все уведомления
+                    Перейти в раздел модерации
                 </a>
             </div>
         </li>

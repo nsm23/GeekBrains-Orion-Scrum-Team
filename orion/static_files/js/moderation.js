@@ -31,7 +31,7 @@ const postModerationFetch = (post_id, action, comment) => {
 
 
 const moderationBtnClick = (postId, action, comment) => {
-    postModerationFetch(postId, action, comment)
+    return postModerationFetch(postId, action, comment)
         .then(response => {
             if ("error" in response)
                 console.log(`Post ${action} error: ${response["error"]}`)
@@ -58,7 +58,7 @@ const moderationLinkClick = (event, action) => {
 
     let a = event.target.closest("a");
     let postId = a.dataset.postId;
-    postModerationFetch(postId, action)
+    return postModerationFetch(postId, action)
         .then(response => {
             if ("error" in response)
                 console.log(`Post ${action} error: ${response["error"]}`)
@@ -113,7 +113,9 @@ const prepareModal = () => {
                 modalInput.focus();
                 return ;
             }
-            moderationBtnClick(button.dataset.postId, "decline", modalInput.value);
+            moderationBtnClick(button.dataset.postId, "decline", modalInput.value).then(() => {
+                location.reload();
+            });
         });
 
         modalTitle.textContent = "Отклонить публикацию";
@@ -131,7 +133,6 @@ document.addEventListener('DOMContentLoaded', event => {
     for (let btn of postApproveBtns)
         btn.addEventListener("click", event => {
             event.preventDefault();
-
             moderationBtnClick(event.target.closest('a').dataset.postId, "approve");
         });
 
@@ -139,17 +140,16 @@ document.addEventListener('DOMContentLoaded', event => {
     for (let link of postApproveLinks)
         link.addEventListener("click", event => {
             event.preventDefault();
-            moderationBtnClick(event.target.dataset.postId, "approve");
-        });
-    for (let link of postDeclineLinks)
-        link.addEventListener("click", event => {
-            event.preventDefault();
-            moderationBtnClick(event.target.dataset.postId, "decline");
+            moderationBtnClick(event.target.dataset.postId, "approve").then(() => {
+                location.reload();
+            });
         });
     for (let link of postBanLinks)
         link.addEventListener("click", event => {
             event.preventDefault();
-            moderationBtnClick(event.target.dataset.postId, "ban");
+            moderationBtnClick(event.target.dataset.postId, "ban").then(() => {
+                location.reload();
+            });
         });
 
     prepareModal();
