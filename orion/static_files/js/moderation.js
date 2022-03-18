@@ -94,6 +94,8 @@ const moderationLinkClick = (event, action) => {
 const prepareModal = () => {
     const modalId = "decline-post";
     const modal = document.querySelector(`#${ modalId }`);
+    if (!modal)
+        return ;
     const modalTitle = modal.querySelector(`#${ modalId }-title`);
     const modalInput = modal.querySelector(`#${ modalId }-input`);
     const modalOkBtn = modal.querySelector(`#${ modalId }-ok-btn`);
@@ -101,11 +103,17 @@ const prepareModal = () => {
     modal.addEventListener("show.bs.modal", event => {
         const button = event.relatedTarget;
 
+        modalOkBtn.textContent = 'Отклонить';
+        modalOkBtn.classList.remove('btn-primary');
+        modalOkBtn.classList.add('btn-danger');
         modalOkBtn.addEventListener("click", event => {
             event.preventDefault();
 
+            if (!modalInput.value) {
+                modalInput.focus();
+                return ;
+            }
             moderationBtnClick(button.dataset.postId, "decline", modalInput.value);
-            modal
         });
 
         modalTitle.textContent = "Отклонить публикацию";
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', event => {
         btn.addEventListener("click", event => {
             event.preventDefault();
 
-            moderationBtnClick(event.target.dataset.postId, "approve");
+            moderationBtnClick(event.target.closest('a').dataset.postId, "approve");
         });
 
     // Links in moderation dropdown bar

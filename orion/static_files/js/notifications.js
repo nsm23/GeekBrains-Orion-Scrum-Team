@@ -134,23 +134,18 @@ const moderationRequestNotificationTemplate = post => {
 
 const moderationNotificationTemplate = obj => {
     let text;
+    let icon;
     let className;
-
-    console.log(obj)
-    console.log(obj.object_id);
-    console.log(obj.content_type);
-    console.log(obj.decision);
-    console.log(obj.comment);
-    console.log(obj.text);
 
     if (obj.content_type === "post") {
         if (obj.decision === "APPROVE") {
-            text = `<i class="bi bi-check-lg"></i> Ваща публикация "${obj.text}" была одобрена.`;
+            icon = "<i class=\"bi bi-check-lg\"></i>";
+            text = `Ваща публикация "${obj.text}" была одобрена.`;
             className = "text-success";
         }
         else if (obj.decision === "DECLINE") {
-            console.log('decline:', obj.comment)
-            text = `<i class="bi bi-x-lg"></i>Модератор отклонил вашу публикацию "${obj.text}" с комментарием:` + obj.comment;
+            icon = "<i class=\"bi bi-x-lg\"></i>";
+            text = `Модератор отклонил вашу публикацию "${obj.text}" с комментарием: <br>${obj.comment}`;
             className = "text-danger";
         }
     }
@@ -159,8 +154,11 @@ const moderationNotificationTemplate = obj => {
 
     return `
         <li class="row mb-2">
-            <div class="col-10">
-                <div class="${ className }">${ text }</div>
+            <div class="col-1 text-center ${className}">
+                ${ icon }
+            </div>
+            <div class="col-9 ${ className }">
+                ${ text }
             </div>
             <div class="col-2 d-flex flex-column justify-content-center">
                 <a title="Прочитано" data-is-read="false" data-object-id="${ obj.object_id }" class="btn btn-sm btn-outline-secondary m-1">
@@ -239,7 +237,7 @@ const generateNoificationsBar = (params) => {
 }
 
 
-const generateModerationNoitificationBar = (notifications_count, posts) => {
+const generateModerationNotificationBar = (notifications_count, posts) => {
     const moderNotificationCounterSpan = document.querySelector('#moderation-notifications-counter');
     const moderNotificationsUl = document.querySelector('#moderation-notifications-ul');
 
@@ -269,7 +267,6 @@ document.addEventListener("DOMContentLoaded", event => {
             if (response["error"])
                 console.log(response["error"])
             else {
-                console.log(response["moderation_acts"])
                 generateNoificationsBar({
                     notifications_count: response["notifications_count"],
                     comments: response["comments"],
@@ -277,7 +274,7 @@ document.addEventListener("DOMContentLoaded", event => {
                     moderation_acts: response["moderation_acts"],
                     current_user_id: response["current_user_id"],
                 });
-                generateModerationNoitificationBar(
+                generateModerationNotificationBar(
                     response["posts_to_moderate_count"],
                     response["posts_to_moderate"],
                 );
