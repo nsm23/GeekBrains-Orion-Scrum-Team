@@ -17,6 +17,8 @@
                 {% include 'users/user_profile_posts.html' with subtitle='Публикации пользователя' %}
             {% elif section == 'user_moderation_posts' %}
                 {% include 'users/user_profile_posts.html' with subtitle='Публикации на модерации' %}
+            {% elif section == 'user_moderation_declined_posts' %}
+                {% include 'users/user_profile_declined_posts.html' with subtitle='Отклоненные публикации' %}
             {% elif section == 'user_drafts' %}
                 {% include 'users/user_profile_posts.html' with subtitle='Черновики публикаций' %}
             {% elif section == 'user_comment_notifications' %}

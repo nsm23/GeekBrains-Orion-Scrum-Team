@@ -30,18 +30,14 @@ const postModerationFetch = (post_id, action, comment) => {
 }
 
 
-const moderationBtnClick = (event, action, comment) => {
-    event.preventDefault();
-
-    let postId = event.target.dataset.postId;
+const moderationBtnClick = (postId, action, comment) => {
     postModerationFetch(postId, action, comment)
         .then(response => {
             if ("error" in response)
                 console.log(`Post ${action} error: ${response["error"]}`)
             else {
                 let moderationBtns = document.querySelectorAll(`#moderation-btns-${ postId } a`);
-                console.log(`#moderation-btns-${ postId } a`)
-                console.log(moderationBtns)
+
                 for (let btn of moderationBtns) {
                     btn.classList.remove('btn-outline-success');
                     btn.classList.remove('btn-outline-danger');
@@ -98,23 +94,27 @@ const moderationLinkClick = (event, action) => {
 const prepareModal = () => {
     const modalId = "decline-post";
     const modal = document.querySelector(`#${ modalId }`);
-    const input = modal.querySelector(`#${ modalId }-input`);
+    const modalTitle = modal.querySelector(`#${ modalId }-title`);
+    const modalInput = modal.querySelector(`#${ modalId }-input`);
+    const modalOkBtn = modal.querySelector(`#${ modalId }-ok-btn`);
 
     modal.addEventListener("show.bs.modal", event => {
-        let button = event.relatedTarget;
+        const button = event.relatedTarget;
 
-        button.addEventListener("click", event => {
-            moderationBtnClick(event, "decline", input.value);
+        modalOkBtn.addEventListener("click", event => {
+            event.preventDefault();
+
+            moderationBtnClick(button.dataset.postId, "decline", modalInput.value);
+            modal
         });
-        let modalTitle = modal.querySelector(`#${ modalId }-title`)
-        modalTitle.textContent = "Отклонить публикацию"
+
+        modalTitle.textContent = "Отклонить публикацию";
     })
 }
 
 
 document.addEventListener('DOMContentLoaded', event => {
     let postApproveBtns = document.querySelectorAll('.post-approve-btn');
-    let postDeclineBtns = document.querySelectorAll('.post-decline-btn');
     let postApproveLinks = document.querySelectorAll('.post-approve-link');
     let postDeclineLinks = document.querySelectorAll('.post-decline-link');
     let postBanLinks = document.querySelectorAll('.post-ban-link');
@@ -122,25 +122,25 @@ document.addEventListener('DOMContentLoaded', event => {
     // Buttons on moderation page
     for (let btn of postApproveBtns)
         btn.addEventListener("click", event => {
-            moderationBtnClick(event, "approve");
+            event.preventDefault();
+            moderationBtnClick(event.target.dataset.postId, "approve");
         });
-    // for (let btn of postDeclineBtns)
-    //     btn.addEventListener("click", event => {
-    //         moderationBtnClick(event, "decline");
-    //     });
 
     // Links in moderation dropdown bar
     for (let link of postApproveLinks)
         link.addEventListener("click", event => {
-            moderationLinkClick(event, "approve");
+            event.preventDefault();
+            moderationBtnClick(event.target.dataset.postId, "approve");
         });
     for (let link of postDeclineLinks)
         link.addEventListener("click", event => {
-            moderationLinkClick(event, "decline");
+            event.preventDefault();
+            moderationBtnClick(event.target.dataset.postId, "decline");
         });
     for (let link of postBanLinks)
         link.addEventListener("click", event => {
-            moderationLinkClick(event, "ban");
+            event.preventDefault();
+            moderationBtnClick(event.target.dataset.postId, "ban");
         });
 
     prepareModal();

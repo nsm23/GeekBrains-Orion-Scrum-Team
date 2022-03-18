@@ -29,7 +29,7 @@ def approve_post_publishing(request, post_id):
     post.save()
     moderation = Moderation(
         moderator=request.user,
-        decision='APPROVE',
+        decision=Moderation.ModerationDecision.APPROVE,
         content_type=ContentType.objects.get(model='post'),
         object_id=post.id,
     )
@@ -51,6 +51,19 @@ def decline_post_publishing(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.DECLINED
     post.save()
+    moderation = Moderation(
+        moderator=request.user,
+        decision=Moderation.ModerationDecision.DECLINE,
+        content_type=ContentType.objects.get(model='post'),
+        object_id=post.id,
+    )
+    moderation.save()
+    Notification.create_notification(
+        content_type=ContentType.objects.get(model='moderation'),
+        object_id=moderation.id,
+        user_id=request.user.id,
+        target_user_id=post.user.id,
+    )
     return JsonResponse({'post_id': post_id}, status=200)
 
 
