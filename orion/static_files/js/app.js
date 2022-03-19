@@ -161,12 +161,58 @@ tinyMCE.init({
     toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
 });
 
-function like() {
-    const like = $(this);
-    const type = like.data('type');
-    const pk = like.data('id');
-    const action = like.data('action');
-    const dislike = like.next();
+function formatReactionBtn(reactionBtn, reactionType) {
+    /**
+     * Format reaction buttons (like or dislike):
+     * * toggle a color of a clicked button icon between colored (green for like and red for dislike) and uncolored
+     * (gray) via Bootstrap classes;
+     * * toggle the clicked button icon between filled and unfilled
+     * * set a color of the opposite button (like vs. dislike) as uncolored
+     * * set an icon of the opposite button (like vs. dislike) as unfilled
+     * */
+
+    const LIKE_CLASSES = {
+        coloredTextClass: "text-success",
+        uncoloredTextClass: "text-secondary",
+        filledIconClass: "bi-hand-thumbs-up-fill",
+        unfilledIconClass: "bi-hand-thumbs-up",
+    }
+    const DISLIKE_CLASSES = {
+        coloredTextClass: "text-danger",
+        uncoloredTextClass: "text-secondary",
+        filledIconClass: "bi-hand-thumbs-down-fill",
+        unfilledIconClass: "bi-hand-thumbs-down",
+    }
+
+    let reactionBtnClasses, oppositeReactionBtnClasses, oppositeReactionSelector;
+    if (reactionType === "like") {
+        reactionBtnClasses = LIKE_CLASSES;
+        oppositeReactionBtnClasses = DISLIKE_CLASSES;
+        oppositeReactionSelector = ".dislike-btn";
+    } else if (reactionType === "dislike") {
+        reactionBtnClasses = DISLIKE_CLASSES;
+        oppositeReactionBtnClasses = LIKE_CLASSES;
+        oppositeReactionSelector = ".like-btn";
+    }
+    const reactionBtnIcon = reactionBtn.querySelector('i');
+    const oppositeReactionBtn = reactionBtn.parentElement.querySelector(oppositeReactionSelector);
+    const oppositeReactionBtnIcon = oppositeReactionBtn.querySelector('i');
+
+    reactionBtn.classList.toggle(reactionBtnClasses.coloredTextClass);
+    reactionBtn.classList.toggle(reactionBtnClasses.uncoloredTextClass);
+    reactionBtnIcon.classList.toggle(reactionBtnClasses.filledIconClass);
+    reactionBtnIcon.classList.toggle(reactionBtnClasses.unfilledIconClass);
+
+    oppositeReactionBtn.classList.remove(oppositeReactionBtnClasses.coloredTextClass);
+    oppositeReactionBtn.classList.add(oppositeReactionBtnClasses.uncoloredTextClass);
+    oppositeReactionBtnIcon.classList.remove(oppositeReactionBtnClasses.filledIconClass);
+    oppositeReactionBtnIcon.classList.add(oppositeReactionBtnClasses.unfilledIconClass);
+}
+
+function reaction(reactionBtn, reactionType) {
+    const type = reactionBtn.dataset.type;
+    const pk = reactionBtn.dataset.id;
+    const action = reactionBtn.dataset.action;
 
     $.ajax({
         url: "/" + type + "/" + pk + "/" + action + "/",
@@ -174,66 +220,23 @@ function like() {
         data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
 
         success: function (json) {
-            const data = JSON.parse(json)
+            const sum_rating = JSON.parse(json).sum_rating;
             const like_total = document.querySelector('#like-total');
-            like_total.innerHTML = data.sum_rating > 0 ? '+' : '';
-            like_total.innerHTML += data.sum_rating;
 
-            const likeBtn = like_total.parentElement.querySelector('.like-btn');
-            const likeBtnIcon = likeBtn.querySelector('i');
-            const dislikeBtn = like_total.parentElement.querySelector('.dislike-btn');
-            const dislikeBtnIcon = dislikeBtn.querySelector('i');
-
-            likeBtn.classList.toggle('text-success');
-            likeBtn.classList.toggle('text-secondary');
-            likeBtnIcon.classList.toggle('bi-hand-thumbs-up-fill');
-            likeBtnIcon.classList.toggle('bi-hand-thumbs-up');
-
-            dislikeBtn.classList.remove('text-danger');
-            dislikeBtn.classList.add('text-secondary');
-            dislikeBtnIcon.classList.remove('bi-hand-thumbs-down-fill');
-            dislikeBtnIcon.classList.add('bi-hand-thumbs-down');
+            like_total.innerHTML = sum_rating > 0 ? '+' : '';
+            like_total.innerHTML += sum_rating;
+            formatReactionBtn(reactionBtn, reactionType);
         }
-
     });
     return false;
 }
 
+function like() {
+    return reaction($(this));
+}
+
 function dislike() {
-    const dislike = $(this);
-    const type = dislike.data('type');
-    const pk = dislike.data('id');
-    const action = dislike.data('action');
-    const like = dislike.prev();
-
-    $.ajax({
-        url: "/" + type + "/" + pk + "/" + action + "/",
-        type: 'POST',
-        data: {'obj': pk, 'csrfmiddlewaretoken': Cookies.get('csrftoken')},
-
-        success: function (json) {
-            const data = JSON.parse(json);
-            const like_total = document.querySelector('#like-total');
-            like_total.innerHTML = data.sum_rating > 0 ? '+' : '';
-            like_total.innerHTML += data.sum_rating;
-
-            const likeBtn = like_total.parentElement.querySelector('.like-btn');
-            const likeBtnIcon = likeBtn.querySelector('i');
-            const dislikeBtn = like_total.parentElement.querySelector('.dislike-btn');
-            const dislikeBtnIcon = dislikeBtn.querySelector('i');
-
-            likeBtn.classList.remove('text-success');
-            likeBtn.classList.add('text-secondary');
-            likeBtnIcon.classList.remove('bi-hand-thumbs-up-fill');
-            likeBtnIcon.classList.add('bi-hand-thumbs-up');
-
-            dislikeBtn.classList.toggle('text-danger');
-            dislikeBtn.classList.toggle('text-secondary');
-            dislikeBtnIcon.classList.toggle('bi-hand-thumbs-down-fill');
-            dislikeBtnIcon.classList.toggle('bi-hand-thumbs-down');
-        }
-    });
-    return false;
+    return reaction($(this));
 }
 
 function speech() {
