@@ -114,6 +114,7 @@ const prepareModal = () => {
                 return ;
             }
             moderationBtnClick(button.dataset.postId, "decline", modalInput.value).then(() => {
+                // ToDo: use close Modal window method
                 location.reload();
             });
         });
