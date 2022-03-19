@@ -257,7 +257,7 @@ const generateModerationNotificationBar = (notifications_count, posts) => {
 }
 
 
-document.addEventListener("DOMContentLoaded", event => {
+const getNotifications = () => {
     const request = new Request(NOTIFICATIONS_HEADER_URL);
     const options = {method: "GET", mode: "same-origin"};
 
@@ -292,4 +292,9 @@ document.addEventListener("DOMContentLoaded", event => {
             }
         )
         .catch()
+}
+
+
+document.addEventListener("DOMContentLoaded", event => {
+    getNotifications();
 });
