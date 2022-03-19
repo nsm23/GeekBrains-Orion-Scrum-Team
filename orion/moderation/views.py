@@ -20,6 +20,9 @@ class PostModerationListView(PermissionRequiredMixin, ListView):
     queryset = Post.objects.filter(status=Post.ArticleStatus.MODERATION)
     login_url = reverse_lazy('users:login')
 
+    def has_permission(self):
+        return self.request.user.is_staff
+
 
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('users:login'))
