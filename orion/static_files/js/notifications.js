@@ -112,7 +112,7 @@ const moderationRequestNotificationTemplate = post => {
                 <img class="w-75 rounded-circle" src="${ post.user_avatar_url }">
             </div>
             <div class="col-8">
-                <a href="${ USER_PROFILE_URL.replace('{{id}}', post.user_id) }" class="text-dark">
+                <a href="${ USER_PROFILE_URL.replace('{{id}}', post.post_user_id) }" class="text-dark">
                     @${ post.username }</a>
                 <div>
                     Публикация "${ post.post_title }" ожидает Вашего одобрения.
