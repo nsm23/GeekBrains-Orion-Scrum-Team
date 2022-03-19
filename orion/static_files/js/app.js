@@ -232,11 +232,11 @@ function reaction(reactionBtn, reactionType) {
 }
 
 function like() {
-    return reaction($(this));
+    return reaction($(this)[0], "like");
 }
 
 function dislike() {
-    return reaction($(this));
+    return reaction($(this)[0], "dislike");
 }
 
 function speech() {
