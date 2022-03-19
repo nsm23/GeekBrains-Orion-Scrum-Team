@@ -176,7 +176,23 @@ function like() {
         success: function (json) {
             const data = JSON.parse(json)
             const like_total = document.querySelector('#like-total');
-            like_total.innerHTML = data.sum_rating;
+            like_total.innerHTML = data.sum_rating > 0 ? '+' : '';
+            like_total.innerHTML += data.sum_rating;
+
+            const likeBtn = like_total.parentElement.querySelector('.like-btn');
+            const likeBtnIcon = likeBtn.querySelector('i');
+            const dislikeBtn = like_total.parentElement.querySelector('.dislike-btn');
+            const dislikeBtnIcon = dislikeBtn.querySelector('i');
+
+            likeBtn.classList.toggle('text-success');
+            likeBtn.classList.toggle('text-secondary');
+            likeBtnIcon.classList.toggle('bi-hand-thumbs-up-fill');
+            likeBtnIcon.classList.toggle('bi-hand-thumbs-up');
+
+            dislikeBtn.classList.remove('text-danger');
+            dislikeBtn.classList.add('text-secondary');
+            dislikeBtnIcon.classList.remove('bi-hand-thumbs-down-fill');
+            dislikeBtnIcon.classList.add('bi-hand-thumbs-down');
         }
 
     });
@@ -198,7 +214,23 @@ function dislike() {
         success: function (json) {
             const data = JSON.parse(json);
             const like_total = document.querySelector('#like-total');
-            like_total.innerHTML = data.sum_rating;
+            like_total.innerHTML = data.sum_rating > 0 ? '+' : '';
+            like_total.innerHTML += data.sum_rating;
+
+            const likeBtn = like_total.parentElement.querySelector('.like-btn');
+            const likeBtnIcon = likeBtn.querySelector('i');
+            const dislikeBtn = like_total.parentElement.querySelector('.dislike-btn');
+            const dislikeBtnIcon = dislikeBtn.querySelector('i');
+
+            likeBtn.classList.remove('text-success');
+            likeBtn.classList.add('text-secondary');
+            likeBtnIcon.classList.remove('bi-hand-thumbs-up-fill');
+            likeBtnIcon.classList.add('bi-hand-thumbs-up');
+
+            dislikeBtn.classList.toggle('text-danger');
+            dislikeBtn.classList.toggle('text-secondary');
+            dislikeBtnIcon.classList.toggle('bi-hand-thumbs-down-fill');
+            dislikeBtnIcon.classList.toggle('bi-hand-thumbs-down');
         }
     });
     return false;
