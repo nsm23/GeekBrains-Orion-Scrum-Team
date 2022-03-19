@@ -1,6 +1,6 @@
 <div class="col-sm-8 like-panel" style="font-size: 1.3rem;">
 
-    <span class="{% if current_user_like == -1 %}text-danger{% else %}text-secondary{% endif %}"
+    <span class="dislike-btn {% if current_user_like == -1 %}text-danger{% else %}text-secondary{% endif %}"
           data-id="{{ post.id }}"
           data-type="posts"
           data-action="dislike"
@@ -15,7 +15,7 @@
     <span id="like-total"> {% if likes_count > 0 %}+{% endif %}{{ likes_count }} </span>
 
 
-    <span class="{% if current_user_like == 1 %}text-success{% else %}text-secondary{% endif %}"
+    <span class="like-btn {% if current_user_like == 1 %}text-success{% else %}text-secondary{% endif %}"
           data-id="{{ post.id }}"
           data-type="posts"
           data-action="like"

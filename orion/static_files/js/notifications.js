@@ -1,42 +1,12 @@
 "use strict";
 
 
+const MODERATION_URL = "/moderation/posts/"
 const NOTIFICATIONS_HEADER_URL = "/notifications/header/";
 const NOTIFICATION_SET_READ_URL = "/notifications/mark-as-read/";
 const NOTIFICATION_SET_READ_AND_REDIRECT_URL = "/notifications/mark-as-read/{{model}}/{{id}}/";
 const USER_PROFILE_URL = "/cabinet/{{id}}/user_detail/"
 const USER_PROFILE_NOTIFICATIONS_URL = "/cabinet/{{id}}/user_comment_notifications/"
-
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-const makeFetch = async (request, options)  => {
-    return fetch(request, options)
-        .then(async response => {
-            if (response.ok)
-                return response.json()
-            else {
-                response = `${response.status} ${response.statusText}`
-                return {"error": response}
-            }
-        })
-        .catch(error => console.log("Error: " + error))
-}
 
 
 const markNotificationReadFetch = ids => {
@@ -71,7 +41,7 @@ const markNotificationRead = event => {
 }
 
 
-const commentNotificationTemplate = (comment) => {
+const commentNotificationTemplate = comment => {
     return `
         <li class="row mb-2">
             <div class="col-2 text-center py-2">
@@ -99,7 +69,7 @@ const commentNotificationTemplate = (comment) => {
 }
 
 
-const likeNotificationTemplate = (like) => {
+const likeNotificationTemplate = like => {
     let text = '';
     let className = '';
     if (like.vote === 1) {
@@ -135,6 +105,74 @@ const likeNotificationTemplate = (like) => {
 }
 
 
+const moderationRequestNotificationTemplate = post => {
+    return `
+        <li class="row mb-2">
+            <div class="col-2 text-center py-2">
+                <img class="w-75 rounded-circle" src="${ post.user_avatar_url }">
+            </div>
+            <div class="col-8">
+                <a href="${ USER_PROFILE_URL.replace('{{id}}', post.post_user_id) }" class="text-dark">
+                    @${ post.username }</a>
+                <div>
+                    Публикация "${ post.post_title }" ожидает Вашего одобрения.
+                </div>
+            </div>
+            <div class="col-2 d-flex flex-column justify-content-center">
+                <a title="Прочитано" data-is-read="false" data-object-id="${ post.post_id }" class="btn btn-sm btn-outline-secondary m-1">
+                    <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
+                </a>
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',post.post_id).replace('{{model}}', 'post') }"
+                    title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
+                    <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
+const moderationNotificationTemplate = obj => {
+    let text;
+    let icon;
+    let className;
+
+    if (obj.content_type === "post") {
+        if (obj.decision === "APPROVE") {
+            icon = "<i class=\"bi bi-check-lg\"></i>";
+            text = `Ваща публикация "${obj.text}" была одобрена.`;
+            className = "text-success";
+        }
+        else if (obj.decision === "DECLINE") {
+            icon = "<i class=\"bi bi-x-lg\"></i>";
+            text = `Модератор отклонил вашу публикацию "${obj.text}" с комментарием: <br>${obj.comment}`;
+            className = "text-danger";
+        }
+    }
+    else
+        return;
+    return `
+        <li class="row mb-2">
+            <div class="col-1 text-center ${className}">
+                ${ icon }
+            </div>
+            <div class="col-9 ${ className }">
+                ${ text }
+            </div>
+            <div class="col-2 d-flex flex-column justify-content-center">
+                <a title="Прочитано" data-is-read="false" data-object-id="${ obj.object_id }" class="btn btn-sm btn-outline-secondary m-1">
+                    <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
+                </a>
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',obj.object_id).replace('{{model}}', obj.content_type) }"
+                    title="Перейти к публикации" class="btn btn-sm btn-outline-secondary m-1"  href="">
+                    <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
 const AllNotificationsLinkTemplate = user_id => {
     return `
         <li class="row mt-4 mb-2">
@@ -148,10 +186,29 @@ const AllNotificationsLinkTemplate = user_id => {
 }
 
 
-const generateNoificationsBar = (notifications_count, comments, likes, current_user_id) => {
+const ModerationLinkTemplate = () => {
+    return `
+        <li class="row mt-4 mb-2">
+            <div class="col text-center">
+                <a href="${ MODERATION_URL }" class="text-dark">
+                    Перейти в раздел модерации
+                </a>
+            </div>
+        </li>
+    `
+}
+
+
+const generateNoificationsBar = (params) => {
+    // notifications_count, comments, likes, current_user_id
     const notificationsCounterSpan = document.querySelector('#notifications-counter');
     const notificationsUl = document.querySelector('#notifications-ul');
 
+    let notifications_count = params.notifications_count || 0;
+    let comments = params.comments || [];
+    let likes = params.likes || [];
+    let moderation_acts = params.moderation_acts || [];
+    let current_user_id = params.current_user_id;
 
     if (notifications_count > 0)
         notificationsCounterSpan.textContent = notifications_count;
@@ -170,11 +227,37 @@ const generateNoificationsBar = (notifications_count, comments, likes, current_u
         for (let like of likes)
             notificationsUl.innerHTML += likeNotificationTemplate(like);
     }
+    if (moderation_acts.length > 0) {
+        notificationsUl.innerHTML += "<h5 class='mt-3'>Модерация</h5>";
+        for (let act of moderation_acts)
+            notificationsUl.innerHTML += moderationNotificationTemplate(act);
+    }
     notificationsUl.innerHTML += AllNotificationsLinkTemplate(current_user_id);
 }
 
 
-document.addEventListener("DOMContentLoaded", event => {
+const generateModerationNotificationBar = (notifications_count, posts) => {
+    const moderNotificationCounterSpan = document.querySelector('#moderation-notifications-counter');
+    const moderNotificationsUl = document.querySelector('#moderation-notifications-ul');
+
+    if (!moderNotificationsUl)
+        return ;
+
+    if (notifications_count > 0)
+        moderNotificationCounterSpan.textContent = notifications_count;
+
+    moderNotificationsUl.innerHTML = "";
+    if (posts.length > 0) {
+        moderNotificationsUl.innerHTML += "<h5 class='mt-3'>Публикации на модерацию</h5>";
+        for (let post of posts)
+            moderNotificationsUl.innerHTML += moderationRequestNotificationTemplate(post);
+    }
+
+    moderNotificationsUl.innerHTML += ModerationLinkTemplate();
+}
+
+
+const getNotifications = () => {
     const request = new Request(NOTIFICATIONS_HEADER_URL);
     const options = {method: "GET", mode: "same-origin"};
 
@@ -183,19 +266,24 @@ document.addEventListener("DOMContentLoaded", event => {
             if (response["error"])
                 console.log(response["error"])
             else {
-                generateNoificationsBar(
-                    response["notifications_count"],
-                    response["comments"],
-                    response["likes"],
-                    response["current_user_id"],
-                    );
+                generateNoificationsBar({
+                    notifications_count: response["notifications_count"],
+                    comments: response["comments"],
+                    likes: response["likes"],
+                    moderation_acts: response["moderation_acts"],
+                    current_user_id: response["current_user_id"],
+                });
+                generateModerationNotificationBar(
+                    response["posts_to_moderate_count"],
+                    response["posts_to_moderate"],
+                );
             }
         })
         .then(() => {
                 let markAsReadBtns = document.querySelectorAll('.mark-as-read');
 
                 for (let btn of markAsReadBtns) {
-                    btn.addEventListener("click", event => {
+                    btn.closest('a').addEventListener("click", event => {
                         event.preventDefault();
 
                         markNotificationRead(event);
@@ -204,4 +292,9 @@ document.addEventListener("DOMContentLoaded", event => {
             }
         )
         .catch()
+}
+
+
+document.addEventListener("DOMContentLoaded", event => {
+    getNotifications();
 });
