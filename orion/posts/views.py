@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.views.generic import ListView
 from gtts import gTTS
 from django.urls import reverse, reverse_lazy
 from django.views.generic.detail import DetailView
@@ -33,7 +35,7 @@ class PostDetailView(DetailView):
 class PostCreateView(CreateView):
     model = Post
     template_name = 'posts/post_form.html'
-    fields = ['title', 'brief_text', 'text', 'image', 'hub']
+    fields = ['title', 'brief_text', 'text', 'image', 'hub', 'tags']
 
     def form_valid(self, form):
         self.object = form.save()
@@ -66,7 +68,7 @@ class PostCreateView(CreateView):
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'posts/post_form.html'
-    fields = ['title', 'brief_text', 'text', 'image', 'hub', 'status']
+    fields = ['title', 'brief_text', 'text', 'image', 'hub', 'status', 'tags']
 
     def has_permission(self):
         if self.request.user.is_anonymous:
@@ -127,3 +129,16 @@ def text_to_voice_view(request, slug):
 
         return HttpResponse(path)
     return HttpResponse()
+
+
+class ListTagView(ListView):
+    template_name = 'index.html'
+    paginate_by = 12
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Тэг: ' + self.kwargs.get('slug')
+        return context
+
+    def get_queryset(self):
+        return Post.objects.filter(Q(status=Post.ArticleStatus.ACTIVE) & Q(tags__slug=self.kwargs.get('slug')))

@@ -1,5 +1,7 @@
-{% for tag in tag_list %}
-  <div class="-5">
-    tag.text
-  </div>
-{% endfor %}
+<div style="display:flex">
+    {% for tag in post.tags.all %}
+      <a  href={% url 'posts:tag' slug=tag.slug %} class="btn btn-secondary tag">
+        <span>#{{ tag }}</span>
+      </a>
+    {% endfor %}
+</div>

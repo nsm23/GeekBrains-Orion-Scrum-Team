@@ -4,8 +4,8 @@ from hub.models import Hub
 from django.utils.translation import gettext_lazy as _
 
 from likes.models import LikeDislike
-from tags.models import Tag
 from users.models import User
+from taggit.managers import TaggableManager
 
 
 class Post(models.Model):
@@ -29,7 +29,7 @@ class Post(models.Model):
     modified_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
     status = models.CharField(choices=ArticleStatus.choices, max_length=16, default=ArticleStatus.ACTIVE)
     votes = GenericRelation(LikeDislike, related_query_name='posts')
-    tags = models.ManyToManyField(Tag)
+    tags = TaggableManager(blank=True)
 
     def __str__(self):
         return self.title

@@ -42,11 +42,12 @@
     <label for="image" class="form-label">Приложите изображение:</label>
     <input type="file" class="form-control" id="image" name="image" accept="image/*" value="{{form.image.value}}">
   </div>
+  {% include 'tags/form.html' %}
+
   <div class="mb-3">
     <input class="form-check-input me-1" type="checkbox" {% if form.status.value != "DRAFT" %}checked{% endif %} aria-label="..." name="publish">
     Опубликовать
   </div>
-  111{{post.tag}}
 
   <button type="submit" class="btn btn-primary">Сохранить</button>
 </form>

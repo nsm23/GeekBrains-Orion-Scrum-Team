@@ -17,6 +17,9 @@
           {% load humanize %}
         {% include 'likes/likedislike.html' %}
         </div>
+
+      {% include "tags/list.html" with tags=object.tags.all %}
+
       <button id="speech"
               class="speech-button"
               data-action="speech"
