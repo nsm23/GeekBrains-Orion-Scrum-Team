@@ -1,23 +1,37 @@
+import os
+import hashlib
 from django.db.models import Q
 from django.views.generic import ListView
-from gtts import gTTS
-from django.urls import reverse, reverse_lazy
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from pytils.translit import slugify
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse, reverse_lazy
+
+from gtts import gTTS
+from pytils.translit import slugify
+
 from hub.models import Hub
 from likes.models import LikeDislike
+from notifications.models import Notification
 from posts.models import Post
 
 
 class PostDetailView(DetailView):
     model = Post
     template_name = 'posts/index.html'
+
+    def get_object(self, queryset=None):
+        post = super(PostDetailView, self).get_object(queryset)
+        # only author and staff can see inactive post (draft, on moderation, etc)
+        if post.status != 'ACTIVE':
+            user = self.request.user
+            if user != post.user and not user.is_staff:
+                raise Http404
+        return post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,9 +76,17 @@ class PostCreateView(CreateView):
         self.object.save()
         if action == 'publish':
             return HttpResponseRedirect(reverse('main'))
+        if action == 'moderation':
+            Notification.create_notification(
+                content_type=ContentType.objects.get(model='post'),
+                object_id=self.object.id,
+                user_id=self.request.user.id,
+                target_user_id=None,
+            )
         return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
 
 
+# ToDo: check, if post was declined previously !
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     model = Post
     template_name = 'posts/post_form.html'
@@ -120,12 +142,14 @@ def text_to_voice_view(request, slug):
     if request.method == 'POST':
         text = request.POST.get('text')
         text = text.replace(u'\xa0', ' ')
-        language = 'ru'
 
-        path = f'speech/{str(slug)}.mp3'
-        file = gTTS(text=text, lang=language, slow=False)
+        text_hash = hashlib.sha1(text.encode("utf-8")).hexdigest()[-10:]
+        path = os.path.join('speech', f'{slug}-{text_hash}.mp3')
+        full_path = os.path.join('media', path)
 
-        file.save('media/' + path)
+        if not os.path.exists(full_path):
+            file = gTTS(text=text, lang='ru', slow=False)
+            file.save(full_path)
 
         return HttpResponse(path)
     return HttpResponse()
