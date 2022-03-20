@@ -1,3 +1,6 @@
+import os
+import hashlib
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
@@ -138,12 +141,14 @@ def text_to_voice_view(request, slug):
     if request.method == 'POST':
         text = request.POST.get('text')
         text = text.replace(u'\xa0', ' ')
-        language = 'ru'
 
-        path = f'speech/{str(slug)}.mp3'
-        file = gTTS(text=text, lang=language, slow=False)
+        text_hash = hashlib.sha1(text.encode("utf-8")).hexdigest()[-10:]
+        path = os.path.join('speech', f'{slug}-{text_hash}.mp3')
+        full_path = os.path.join('media', path)
 
-        file.save('media/' + path)
+        if not os.path.exists(full_path):
+            file = gTTS(text=text, lang='ru', slow=False)
+            file.save(full_path)
 
         return HttpResponse(path)
     return HttpResponse()

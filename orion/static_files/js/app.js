@@ -254,6 +254,7 @@ function speech() {
         'text': textToSpeech,
     },
     success: function (speechFilePath) {
+      $('#speech-button').remove()
       spinner.removeClass( "fa fa-spinner fa-spin" )
       file = window.location.origin + '/media/' + speechFilePath
 
