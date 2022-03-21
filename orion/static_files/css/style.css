@@ -95,3 +95,13 @@ a.profile-link {
   text-decoration: none;
   color: inherit;
 }
+
+.tag{
+  padding: 0px 5px 0px 5px;
+  margin: 5px;
+}
+
+.tag-search-result {
+  font-size: 1.25rem;
+  padding: 10px;
+}
