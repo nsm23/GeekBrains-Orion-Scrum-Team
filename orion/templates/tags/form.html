@@ -4,5 +4,7 @@
            data-role="tagsinput"
            class="form-control"
            name="tags"
-           value="{{form.tags.value|join:' '}}">
+           {% if form.tags.value %}
+            value="{{form.tags.value|join:' '}}"
+           {% endif %}>
 </div>
