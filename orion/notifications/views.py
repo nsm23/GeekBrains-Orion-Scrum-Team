@@ -18,19 +18,29 @@ POST_TO_MODERATOR_NUMBER_TO_SHOW = 3
 POST_MODERATION_RESULT_NUMBER_TO_SHOW = 3
 
 
+from typing import List, Union
+from django.db.models import QuerySet
+
+def get_notifying_object(notifications: Union[QuerySet, List[Notification]],
+                         model,
+                         order_by: Union[str, None] = None) -> QuerySet:
+    object_ids = notifications.filter(content_type__model=model.__name__.lower()).values_list('object_id')
+    queryset = model.objects.filter(id__in=object_ids)
+    if order_by:
+        queryset = queryset.order_by(order_by)
+    return queryset
+
+
 @login_required(login_url=reverse_lazy('users:login'))
 def get_notifications(request):
     notifications = Notification.objects.filter(
         target_user=request.user,
         status=Notification.NotificationStatus.UNREAD,
     )
-    comment_ids = notifications.filter(content_type__model='comment').values_list('object_id')
-    likes_ids = notifications.filter(content_type__model='likedislike').values_list('object_id')
-    moderation_ids = notifications.filter(content_type__model='moderation').values_list('object_id')
 
-    comments = Comment.objects.filter(id__in=comment_ids).order_by('-modified_at')
-    likes = LikeDislike.objects.filter(id__in=likes_ids)
-    moderation_acts = Moderation.objects.filter(id__in=moderation_ids).order_by('-date')
+    comments = get_notifying_object(notifications, Comment, '-modified_at')
+    likes = get_notifying_object(notifications, LikeDislike)
+    moderation_acts = get_notifying_object(notifications, Moderation, '-date')
 
     response_notifications = {}
     if request.user.is_staff:
