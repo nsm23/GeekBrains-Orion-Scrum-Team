@@ -96,6 +96,11 @@ a.profile-link {
   color: inherit;
 }
 
+.profile-link-group {
+    display: inline-block;
+    white-space: nowrap;
+}
+
 .tag{
   padding: 0px 5px 0px 5px;
   margin: 5px;
@@ -104,4 +109,7 @@ a.profile-link {
 .tag-search-result {
   font-size: 1.25rem;
   padding: 10px;
+}
+
+.search-group {
 }
