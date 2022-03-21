@@ -1,16 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.urls import reverse_lazy
 
 from moderation.models import Moderation
-from notifications.models import Notification
+from moderation.services import post_moderation_run_action
 from posts.models import Post
+from posts.services import post_status_update
 
 
 class PostModerationListView(PermissionRequiredMixin, ListView):
@@ -29,32 +28,8 @@ class PostModerationListView(PermissionRequiredMixin, ListView):
 def approve_post_publishing(request, post_id):
     if not request.user.is_staff:
         raise PermissionDenied()
-    post = get_object_or_404(Post, id=post_id)
-    post.status = Post.ArticleStatus.ACTIVE
-    post.save()
-    moderation = Moderation(
-        moderator=request.user,
-        decision=Moderation.ModerationDecision.APPROVE,
-        content_type=ContentType.objects.get(model='post'),
-        object_id=post.id,
-    )
-    moderation.save()
-
-    notifications = Notification.objects.filter(
-        content_type=ContentType.objects.get(model='post'),
-        object_id=post.id,
-        status=Notification.NotificationStatus.UNREAD,
-    )
-    for notification in notifications:
-        notification.status = Notification.NotificationStatus.READ
-    Notification.objects.bulk_update(notifications, ['status'])
-
-    Notification.create_notification(
-        content_type=ContentType.objects.get(model='moderation'),
-        object_id=moderation.id,
-        user_id=request.user.id,
-        target_user_id=post.user.id,
-    )
+    post = post_status_update(post_id, Post.ArticleStatus.ACTIVE)
+    post_moderation_run_action(request.user, post, Moderation.ModerationDecision.APPROVE)
     return JsonResponse({'post_id': post_id}, status=200)
 
 
@@ -63,33 +38,8 @@ def approve_post_publishing(request, post_id):
 def decline_post_publishing(request, post_id):
     if not request.user.is_staff:
         raise PermissionDenied()
-    post = get_object_or_404(Post, id=post_id)
-    post.status = Post.ArticleStatus.DECLINED
-    post.save()
-
-    moderation = Moderation(
-        moderator=request.user,
-        decision=Moderation.ModerationDecision.DECLINE,
-        content_type=ContentType.objects.get(model='post'),
-        object_id=post.id,
-    )
-    moderation.save()
-
-    notifications = Notification.objects.filter(
-        content_type=ContentType.objects.get(model='post'),
-        object_id=post.id,
-        status=Notification.NotificationStatus.UNREAD,
-    )
-    for notification in notifications:
-        notification.status = Notification.NotificationStatus.READ
-    Notification.objects.bulk_update(notifications, ['status'])
-
-    Notification.create_notification(
-        content_type=ContentType.objects.get(model='moderation'),
-        object_id=moderation.id,
-        user_id=request.user.id,
-        target_user_id=post.user.id,
-    )
+    post = post_status_update(post_id, Post.ArticleStatus.DECLINED)
+    post_moderation_run_action(request.user, post, Moderation.ModerationDecision.DECLINE)
     return JsonResponse({'post_id': post_id}, status=200)
 
 
@@ -98,7 +48,5 @@ def decline_post_publishing(request, post_id):
 def ban_post(request, post_id):
     if not request.user.is_staff:
         raise PermissionDenied()
-    post = get_object_or_404(Post, id=post_id)
-    post.status = Post.ArticleStatus.BANNED
-    post.save()
+    post_status_update(post_id, Post.ArticleStatus.BANNED)
     return JsonResponse({'post_id': post_id}, status=200)
