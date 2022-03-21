@@ -1,5 +1,6 @@
 from django.contrib import auth
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
@@ -7,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
 from likes.models import LikeDislike
+from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 from users.models import User
@@ -23,7 +25,6 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                # return HttpResponse('Authenticated successfully')
                 return HttpResponseRedirect(reverse_lazy('main'))
             else:
                 return HttpResponse('Disabled account')
@@ -75,6 +76,15 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.DRAFT)
         elif section == 'user_moderation_posts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.MODERATION)
+        elif section == 'user_moderation_declined_posts':
+            posts = user.posts.filter(status=Post.ArticleStatus.DECLINED)
+            moderations = Moderation.objects.filter(object_id__in=posts.values_list('id'),
+                                                    content_type=ContentType.objects.get(model='post'),
+                                                    decision=Moderation.ModerationDecision.DECLINE)
+
+            decline_reasons = {m.object_id: m.comment for m in moderations}
+            kwargs['posts'] = [{'object': post, 'decline_reason': decline_reasons.get(post.id)} for post in posts]
+
         elif section == 'user_comment_notifications':
             notifications = Notification.objects.filter(target_user=user)
 
@@ -136,3 +146,11 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
             self.raise_exception = True
             return False
         return True
+
+
+def set_status(request, pk, status):
+    if request.user.is_superuser:
+        user = User.objects.get(pk=pk)
+        user.is_staff = True if status == 'moderator' else False
+        user.save()
+    return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': pk}))
