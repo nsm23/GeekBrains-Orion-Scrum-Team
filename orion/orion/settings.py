@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'likes',
     'moderation',
     'notifications',
+    'taggit',
     'posts',
     'users',
 ]
