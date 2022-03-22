@@ -3,9 +3,9 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
-from django.views.generic import DetailView, UpdateView
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import DetailView, TemplateView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
@@ -21,6 +21,12 @@ class UserLoginView(LoginView):
     template_name = 'users/user_login.html'
     form_class = AuthenticationForm
     next_page = reverse_lazy('main')
+    
+    def form_valid(self, form):
+        user = get_object_or_404(User, username=form.data.get('username'))
+        if user.is_banned:
+            return HttpResponseRedirect(reverse_lazy('users:user_banned'))
+        return super(UserLoginView, self).form_valid(form)
 
 
 def register(request):
@@ -132,6 +138,10 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
             self.raise_exception = True
             return False
         return True
+
+
+class UserBannedTemplateView(TemplateView):
+    template_name = 'users/user_banned.html'
 
 
 def set_status(request, pk, status):
