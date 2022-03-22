@@ -2,11 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from hub.views import MainView, SearchView
+from hub.views import MainView
 
 urlpatterns = [
     path('', MainView.as_view(), name='main'),
-    path('search/', SearchView.as_view(), name='search'),
     path('tinymce/', include('tinymce.urls')),
     path('hub/', include('hub.urls', namespace='hubs')),
     path('admin/', admin.site.urls),

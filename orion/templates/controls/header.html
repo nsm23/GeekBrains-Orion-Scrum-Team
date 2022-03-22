@@ -21,18 +21,7 @@
                 </ul>
                 <div class="d-flex">
                     {# SEARCH BAR #}
-                    <form method="get"
-                          action="{% url 'search' %}">
-                    <div class="input-group search-group">
-                      <div class="form-outline">
-                        <input type="search" class="form-control" name="search"/>
-                      </div>
-                      <button type="submit"
-                            class="btn btn-outline-secondary">
-                        <i class="fas fa-search"></i>
-                      </button>
-                    </div>
-                    </form>
+                    {% include 'controls/search-bar.html' %}
 
                     {% if request.user.is_authenticated %}
                         {#  NOTIFICATIONS DROPDOWN  #}
