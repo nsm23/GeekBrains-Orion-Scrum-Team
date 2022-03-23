@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse, reverse_lazy
 
+from .services import format_datetime_with_system_timezone
 from comments.models import Comment
 from likes.models import LikeDislike
 from moderation.models import Moderation
@@ -59,7 +60,7 @@ def get_notifications(request):
             'user_avatar_url': comment.user.avatar.url,
             'post_id': comment.post.id,
             'text': comment.text,
-            'created_at': comment.created_at,
+            'created_at': format_datetime_with_system_timezone(comment.created_at, 'd.m.Y H:i'),
             'comment_id': comment.id,
         } for comment in comments[:COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW]
     ]
