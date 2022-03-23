@@ -56,6 +56,9 @@
             {% endif %}
         </div>
 
+    {#  POST TAG LIST  #}
+    {% include "tags/list.html" with tags=object.tags.all %}
+
     {#  TEXT VOICEOVER  #}
       <button id="speech-button"
               class="speech-button"
