@@ -162,7 +162,6 @@ def text_to_voice_view(request, slug):
     return HttpResponse()
 
 
-<<<<<<< Updated upstream
 class ListTagView(ListView):
     template_name = 'index.html'
     paginate_by = 12
@@ -175,5 +174,3 @@ class ListTagView(ListView):
 
     def get_queryset(self):
         return Post.objects.filter(Q(status=Post.ArticleStatus.ACTIVE) & Q(tags__slug=self.kwargs.get('slug')))
-=======
->>>>>>> Stashed changes
