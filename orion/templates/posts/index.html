@@ -1,5 +1,5 @@
 {% extends "layouts/main.html" %}
-
+{% load hitcount_tags %}
 {% block title %} {{ post.title }} {% endblock %}
 
 {% block content %}
@@ -39,7 +39,6 @@
                 </ul>
             </div>
         {% endif %}
-
         {% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">{% endif %}
         <div class="card-body">
           <h2 class="card-title">{{ post.title }}</h2>
@@ -55,10 +54,13 @@
                 {% include 'likes/likedislike.html' %}
             {% endif %}
         </div>
+<<<<<<< Updated upstream
 
     {#  POST TAG LIST  #}
     {% include "tags/list.html" with tags=object.tags.all %}
 
+=======
+>>>>>>> Stashed changes
     {#  TEXT VOICEOVER  #}
       <button id="speech-button"
               class="speech-button"
@@ -73,8 +75,8 @@
     {% if post.status == 'ACTIVE' %}
         {% include "comments/list.html" %}
     {% endif %}
-
     {% include "controls/modal-1-input.html" with modal_id="decline-post" %}
+
 {% endblock %}
 
 {% block scripts %}

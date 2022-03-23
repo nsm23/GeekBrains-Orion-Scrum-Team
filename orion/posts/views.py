@@ -7,11 +7,14 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.utils import timezone
+from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 
 from gtts import gTTS
+from hitcount.views import HitCountDetailView
 from pytils.translit import slugify
 
 from hub.models import Hub
@@ -20,9 +23,10 @@ from notifications.models import Notification
 from posts.models import Post
 
 
-class PostDetailView(DetailView):
+class PostDetailView(HitCountDetailView):
     model = Post
     template_name = 'posts/index.html'
+    count_hit = True
 
     def get_object(self, queryset=None):
         post = super(PostDetailView, self).get_object(queryset)
@@ -37,13 +41,16 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
+        context.update({'popular_posts': Post.objects.order_by('-hit_count_generic__hits')[:5]})
         if self.request.user != AnonymousUser():
             try:
-                context['current_user_like'] = LikeDislike.objects.get(user=self.request.user, content_type__model='post',
+                context['current_user_like'] = LikeDislike.objects.get(user=self.request.user,
+                                                                       content_type__model='post',
                                                                        object_id=self.object.id).vote
             except LikeDislike.DoesNotExist:
                 pass
         return context
+
 
 
 class PostCreateView(CreateView):
@@ -155,6 +162,7 @@ def text_to_voice_view(request, slug):
     return HttpResponse()
 
 
+<<<<<<< Updated upstream
 class ListTagView(ListView):
     template_name = 'index.html'
     paginate_by = 12
@@ -167,3 +175,5 @@ class ListTagView(ListView):
 
     def get_queryset(self):
         return Post.objects.filter(Q(status=Post.ArticleStatus.ACTIVE) & Q(tags__slug=self.kwargs.get('slug')))
+=======
+>>>>>>> Stashed changes

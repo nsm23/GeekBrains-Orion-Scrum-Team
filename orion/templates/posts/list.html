@@ -1,3 +1,4 @@
+{% load hitcount_tags %}
 {% for post in post_list %}
   <div class="card card mb-5">
     {% if post.image %}<img src="{{ post.image.url }}" class="img-fluid" alt="{{ post.title }}">{% endif %}
@@ -12,9 +13,12 @@
         <br/>
         {% if post.hub %}хаб: «{{ post.hub.title }}». {% endif %}{{ post.created_at|date:"j M Y" }}
       </h6>
+    <i class="bi bi-eye-fill">{%  get_hit_count for post %}</i>
       <hr>
       <p class="card-text">{{ post.brief_text|safe }}</p>
       <a class="card-link" href="{% url 'posts:detail' slug=post.slug %}"></a>
+
     </div>
+
   </div>
 {% endfor %}
