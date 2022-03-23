@@ -2,10 +2,11 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from hub.models import Hub
 from django.utils.translation import gettext_lazy as _
-
 from likes.models import LikeDislike
 from users.models import User
 from taggit.managers import TaggableManager
+
+from hitcount.models import HitCount
 
 
 class Post(models.Model):
@@ -32,9 +33,13 @@ class Post(models.Model):
     status = models.CharField(choices=ArticleStatus.choices, max_length=16, default=ArticleStatus.ACTIVE)
     votes = GenericRelation(LikeDislike, related_query_name='posts')
     tags = TaggableManager(blank=True)
+    hit_count_generic = GenericRelation(HitCount,
+                                        object_id_field='object_pk',
+                                        related_query_name='hit_count_generic_relation')
 
     def __str__(self):
         return self.title
         
     class Meta:
         ordering = ('-created_at',)
+
