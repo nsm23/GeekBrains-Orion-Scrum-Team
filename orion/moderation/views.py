@@ -12,6 +12,7 @@ from . import services
 from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
+from users import permission_services
 
 
 class PostModerationListView(PermissionRequiredMixin, ListView):
@@ -28,8 +29,7 @@ class PostModerationListView(PermissionRequiredMixin, ListView):
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('users:login'))
 def approve_post_publishing(request, post_id):
-    if not request.user.is_staff:
-        raise PermissionDenied()
+    permission_services.has_moderator_permissions(request.user, raise_exception=True)
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.ACTIVE
     post.save()
@@ -62,8 +62,7 @@ def approve_post_publishing(request, post_id):
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('users:login'))
 def decline_post_publishing(request, post_id):
-    if not request.user.is_staff:
-        raise PermissionDenied()
+    permission_services.has_moderator_permissions(request.user, raise_exception=True)
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.DECLINED
     post.save()
@@ -97,8 +96,7 @@ def decline_post_publishing(request, post_id):
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('users:login'))
 def ban_post(request, post_id):
-    if not request.user.is_staff:
-        raise PermissionDenied()
+    permission_services.has_moderator_permissions(request.user, raise_exception=True)
     post = get_object_or_404(Post, id=post_id)
     post.status = Post.ArticleStatus.BANNED
     post.save()
@@ -108,8 +106,7 @@ def ban_post(request, post_id):
 @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('users:login'))
 def ban_user(request, user_id):
-    if not request.user.is_staff:
-        raise PermissionDenied()
+    permission_services.has_moderator_permissions(request.user, raise_exception=True)
     services.moderation_users_ban(request.user.id, user_id)
     return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': user_id}))
 
@@ -117,8 +114,7 @@ def ban_user(request, user_id):
 @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('users:login'))
 def unban_user(request, user_id):
-    if not request.user.is_staff:
-        raise PermissionDenied()
+    permission_services.has_moderator_permissions(request.user, raise_exception=True)
     services.moderation_users_unban(request.user.id, user_id)
     return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': user_id}))
 

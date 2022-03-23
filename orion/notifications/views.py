@@ -11,6 +11,7 @@ from likes.models import LikeDislike
 from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
+from users import permission_services
 
 COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW = 3
 LIKES_NOTIFICATIONS_NUMBER_TO_SHOW = 3
@@ -33,7 +34,7 @@ def get_notifications(request):
     moderation_acts = Moderation.objects.filter(id__in=moderation_ids).order_by('-date')
 
     response_notifications = {}
-    if request.user.is_staff:
+    if permission_services.has_moderator_permissions(request.user):
         post_ids = Notification.objects.filter(
             target_user__isnull=True,
             status=Notification.NotificationStatus.UNREAD,
