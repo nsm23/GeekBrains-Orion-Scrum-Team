@@ -8,10 +8,10 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 from django.urls import reverse, reverse_lazy
 
+from . import services
 from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
-from users.models import User
 
 
 class PostModerationListView(PermissionRequiredMixin, ListView):
@@ -110,9 +110,7 @@ def ban_post(request, post_id):
 def ban_user(request, user_id):
     if not request.user.is_staff:
         raise PermissionDenied()
-    user = get_object_or_404(User, id=user_id)
-    user.is_banned = True
-    user.save()
+    services.moderation_users_ban(request.user.id, user_id)
     return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': user_id}))
 
 
@@ -121,8 +119,6 @@ def ban_user(request, user_id):
 def unban_user(request, user_id):
     if not request.user.is_staff:
         raise PermissionDenied()
-    user = get_object_or_404(User, id=user_id)
-    user.is_banned = False
-    user.save()
+    services.moderation_users_unban(request.user.id, user_id)
     return HttpResponseRedirect(reverse('users:user_detail', kwargs={'pk': user_id}))
 
