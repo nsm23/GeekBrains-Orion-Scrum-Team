@@ -1,5 +1,7 @@
 from django.contrib import auth
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
@@ -12,29 +14,13 @@ from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 from users.models import User
-from users.forms import UserForm, RegisterForm, LoginForm
+from users.forms import UserForm, RegisterForm
 
 
-def login(request):
-    if request.method == 'POST':
-        form_login = LoginForm(data=request.POST)
-
-        if form_login.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-                return HttpResponseRedirect(reverse_lazy('main'))
-            else:
-                return HttpResponse('Disabled account')
-    else:
-        form_login = LoginForm()
-
-    context = {
-        'form_login': form_login,
-    }
-    return render(request, 'users/user_login.html', context)
+class UserLoginView(LoginView):
+    template_name = 'users/user_login.html'
+    form_class = AuthenticationForm
+    next_page = reverse_lazy('main')
 
 
 def register(request):
