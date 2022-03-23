@@ -20,6 +20,12 @@ body {
   z-index: 1;
 }
 
+.author-link {
+  position: absolute;
+  padding: 0 5px 0 5px;
+  z-index: 2;
+}
+
 .post-list .card-img-top {
   width: 100%;
   height: 15vw;
@@ -41,13 +47,11 @@ body {
   font-size: 1.5rem;
 }
 
-.navbar a .bi-pencil-fill,
-.navbar a .bi-person-circle {
+.navbar a .bi {
   color: rgba(0,0,0,.55);
 }
 
-.navbar a:hover .bi-pencil-fill,
-.navbar a:hover .bi-person-circle {
+.navbar a:hover .bi {
   color: rgba(0,0,0,.7);
 }
 
@@ -85,4 +89,28 @@ body {
 .fa {
   margin-left: -12px;
   margin-right: 8px;
+}
+
+a.profile-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.profile-link-group {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.tag{
+  padding: 0px 5px 0px 5px;
+  margin: 5px;
+}
+
+.tag-search-result {
+  font-size: 1.25rem;
+  padding: 10px;
+}
+
+#loginform-link{
+  margin-left: 20px;
 }

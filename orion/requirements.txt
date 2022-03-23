@@ -32,3 +32,4 @@ urllib3==1.25.8
 webencodings==0.5.1
 pytils==0.3
 crispy-bootstrap5==0.6
+django-taggit==2.1.0

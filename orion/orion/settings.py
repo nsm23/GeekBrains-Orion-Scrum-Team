@@ -49,15 +49,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'tinymce',
-    'hub',
-    'posts',
-    'comments',
-    'users',
-    'likes',
-    'notifications',
+
     'crispy_forms',
     'crispy_bootstrap5',
+    'tinymce',
+    'hitcount',
+
+    'comments',
+    'hub',
+    'likes',
+    'moderation',
+    'notifications',
+    'taggit',
+    'posts',
+    'users',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

@@ -1,22 +1,29 @@
-<div class="col-sm-8 like-panel">
+<div class="col-sm-8 like-panel" style="font-size: 1.3rem;">
 
-    <button class="btn btn-success btn-like"
-            data-id="{{ post.id }}"
-            data-type="posts"
-            data-action="like"
-            title="like">
-        <i class="bi bi-hand-thumbs-up" data-count="like">{{ like_obj.votes.likes.count }}</i>
-    </button>
+    <span class="dislike-btn {% if current_user_like == -1 %}text-danger{% else %}text-secondary{% endif %}"
+          data-id="{{ post.id }}"
+          data-type="posts"
+          data-action="dislike"
+          title="dislike">
+        {% if current_user_like == -1 %}
+            <i class="bi bi-hand-thumbs-down-fill" data-count="dislike">{{ like_obj.votes.dislikes.count }}</i>
+        {% else %}
+            <i class="bi bi-hand-thumbs-down" data-count="dislike">{{ like_obj.votes.dislikes.count }}</i>
+        {% endif %}
+    </span>
 
-    <button class="btn btn-primary">
-        votes<span class="badge badge-light" id="like-total">{{ likes_count }}</span>
-    </button>
+    <span id="like-total"> {% if likes_count > 0 %}+{% endif %}{{ likes_count }} </span>
 
-    <button class="btn btn-danger  btn-dislike"
-            data-id="{{ post.id }}"
-            data-type="posts"
-            data-action="dislike"
-            title="dislike">
-        <i class="bi bi-hand-thumbs-down" data-count="dislike">{{ like_obj.votes.dislikes.count }}</i>
-    </button>
+
+    <span class="like-btn {% if current_user_like == 1 %}text-success{% else %}text-secondary{% endif %}"
+          data-id="{{ post.id }}"
+          data-type="posts"
+          data-action="like"
+          title="like">
+        {% if current_user_like == 1 %}
+            <i class="bi bi-hand-thumbs-up-fill" data-count="like">{{ like_obj.votes.likes.count }}</i>
+        {% else %}
+            <i class="bi bi-hand-thumbs-up" data-count="like">{{ like_obj.votes.likes.count }}</i>
+        {% endif %}
+    </span>
 </div>
