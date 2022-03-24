@@ -11,3 +11,5 @@ static/
 gb_orion/
 
 /orion/orion.sql
+/poetry.lock
+/pyproject.toml

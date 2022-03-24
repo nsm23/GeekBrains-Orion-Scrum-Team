@@ -18,6 +18,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('registered'), auto_now_add=True)
     is_active = models.BooleanField(_('is_active'), default=True)
     is_staff = models.BooleanField(_('staff status'), default=False)
+    is_banned = models.BooleanField(
+        verbose_name='Заблокирован',
+        default=False,
+    )
     rating = models.PositiveSmallIntegerField(
         verbose_name=_('Rating'),
         default=5,

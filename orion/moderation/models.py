@@ -10,6 +10,8 @@ class Moderation(models.Model):
         NONE = 'NONE', 'None'
         APPROVE = 'APPROVE', 'Approve'
         DECLINE = 'DECLINE', 'Decline'
+        BAN = 'BAN', 'Ban'
+        UNBAN = 'UNBAN', 'Unban'
 
     moderator = models.ForeignKey(
         User,
