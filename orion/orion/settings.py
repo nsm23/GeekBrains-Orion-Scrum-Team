@@ -52,14 +52,15 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap5',
+    'taggit',
     'tinymce',
+    'hitcount',
 
     'comments',
     'hub',
     'likes',
     'moderation',
     'notifications',
-    'taggit',
     'posts',
     'users',
 ]
@@ -147,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_L10N = False
 DATE_FORMAT = '%Y-%m-%d'

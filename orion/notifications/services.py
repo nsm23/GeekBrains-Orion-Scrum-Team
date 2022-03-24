@@ -2,6 +2,7 @@ from typing import Dict, List, Type, Union
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, QuerySet
+from django.utils import dateformat, timezone
 
 from .models import Notification
 from comments.models import Comment
@@ -73,4 +74,9 @@ def get_unread_post_notifications(post_id: int) -> QuerySet:
         content_type=ContentType.objects.get(model='post'),
         object_id=post_id,
         status=Notification.NotificationStatus.UNREAD,
+
+def format_datetime_with_system_timezone(datetime, format):
+    return dateformat.format(
+        value=timezone.localtime(datetime, timezone.get_current_timezone()),
+        format_string=format,
     )
