@@ -7,9 +7,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.utils import timezone
-from django.views import View
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 
@@ -75,12 +72,8 @@ class PostCreateView(CreateView):
             redirect_name, section = 'cabinet:user_profile', 'user_drafts'
         self.object.slug = slugify(self.object.title + str(self.object.id))
         self.object.user = self.request.user
-        if 'image' in self.request:
-            post_image = self.request.FILES['image']
-            fs = FileSystemStorage()
-            fs.save(post_image.name, post_image)
-
         self.object.save()
+
         if action == 'publish':
             return HttpResponseRedirect(reverse('main'))
         if action == 'moderation':
@@ -116,14 +109,18 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
         self.object.brief_text = request.POST['brief_text']
         self.object.text = request.POST['text']
         publish = 'publish' in request.POST
-        self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
+        if not publish:
+            self.object.status = Post.ArticleStatus.DRAFT
+
         self.object.slug = slugify(self.object.title + str(self.object.id))
-        if 'image' in request:
+        if 'image' in request.FILES:
             post_image = request.FILES['image']
             fs = FileSystemStorage()
             fs.save(post_image.name, post_image)
+            self.object.image = post_image.name
 
         self.object.save()
+
         if publish:
             return HttpResponseRedirect(reverse('main'))
         return HttpResponseRedirect(reverse('cabinet:user_profile',

@@ -39,6 +39,9 @@
     </select>
   </div>
   <div class="mb-3">
+    {% if post.image %}
+      <img src="{{ post.image.url }}" class="img-fluid">
+    {% endif %}
     <label for="image" class="form-label">Приложите изображение:</label>
     <input type="file" class="form-control" id="image" name="image" accept="image/*" value="{{form.image.value}}">
   </div>

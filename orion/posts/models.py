@@ -6,7 +6,7 @@ from likes.models import LikeDislike
 from users.models import User
 from taggit.managers import TaggableManager
 
-from hitcount.models import HitCountMixin, HitCount
+from hitcount.models import HitCount
 
 
 class Post(models.Model):
