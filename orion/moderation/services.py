@@ -37,7 +37,7 @@ def moderation_action_create(moderator_user_id: int, decision: Moderation.Modera
     moderation = Moderation(
         moderator_id=moderator_user_id,
         decision=decision,
-        content_type=ContentType.objects.get(model.__name__.lower()),
+        content_type=ContentType.objects.get(model=model.__name__.lower()),
         object_id=object_id,
     )
     moderation.save()
