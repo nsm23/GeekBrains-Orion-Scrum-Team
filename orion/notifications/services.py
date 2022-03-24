@@ -74,6 +74,7 @@ def get_unread_post_notifications(post_id: int) -> QuerySet:
         content_type=ContentType.objects.get(model='post'),
         object_id=post_id,
         status=Notification.NotificationStatus.UNREAD,
+    )
 
 def format_datetime_with_system_timezone(datetime, format):
     return dateformat.format(
