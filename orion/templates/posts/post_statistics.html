@@ -1,7 +1,7 @@
 {% load hitcount_tags %}
 
  <div class="list-group">
-    <h7>Популярные статьи</h7>
+    <h5>Популярные статьи</h5>
     {% for p in popular_posts %}
   <a href="{% url 'posts:detail' slug=p.slug %}"
      class="list-group-item list-group-item-action"
