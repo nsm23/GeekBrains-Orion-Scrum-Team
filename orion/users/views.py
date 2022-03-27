@@ -4,8 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.views.generic import DetailView, TemplateView, UpdateView
+from django.shortcuts import render
+from django.views.generic import DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
@@ -15,18 +15,13 @@ from notifications.models import Notification
 from posts.models import Post
 from users.models import User
 from users.forms import UserForm, RegisterForm
+from users.permission_services import has_common_user_permission
 
 
 class UserLoginView(LoginView):
     template_name = 'users/user_login.html'
     form_class = AuthenticationForm
     next_page = reverse_lazy('main')
-    
-    def form_valid(self, form):
-        user = get_object_or_404(User, username=form.data.get('username'))
-        if user.is_banned:
-            return HttpResponseRedirect(reverse_lazy('users:user_banned'))
-        return super(UserLoginView, self).form_valid(form)
 
 
 def register(request):
@@ -58,10 +53,7 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         user = kwargs.get('object')
-        section = self.kwargs.get('section')
-        if not section:
-            section = 'user_detail'
-
+        section = self.kwargs.get('section', 'user_detail')
         if section == 'user_posts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.ACTIVE)
         elif section == 'user_drafts':
@@ -110,13 +102,9 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
         return super().get_context_data(**kwargs)
 
     def has_permission(self):
-        section = self.kwargs.get("section")
+        section = self.kwargs.get('section', 'user_detail')
         if section not in self.INSECURE_SECTIONS:
-            if self.request.user.is_anonymous:
-                return False
-            if self.request.user.pk != self.kwargs['pk'] and not self.request.user.is_superuser:
-                self.raise_exception = True
-                return False
+            return has_common_user_permission(self.request.user) and self.request.user.pk == self.kwargs["pk"]
         return True
 
 
@@ -138,10 +126,6 @@ class UserUpdateView(PermissionRequiredMixin, UpdateView):
             self.raise_exception = True
             return False
         return True
-
-
-class UserBannedTemplateView(TemplateView):
-    template_name = 'users/user_banned.html'
 
 
 def set_status(request, pk, status):
