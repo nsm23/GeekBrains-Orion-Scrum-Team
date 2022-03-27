@@ -103,9 +103,9 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
 
     def has_permission(self):
         section = self.kwargs.get('section', 'user_detail')
-        if section not in self.INSECURE_SECTIONS:
-            return has_common_user_permission(self.request.user) and self.request.user.pk == self.kwargs["pk"]
-        return True
+        if section in self.INSECURE_SECTIONS:
+            return True
+        return has_common_user_permission(self.request.user) and self.request.user.pk == self.kwargs["pk"]
 
 
 class UserUpdateView(PermissionRequiredMixin, UpdateView):
