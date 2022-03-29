@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'hitcount',
 
     'comments',
+    'complaints',
     'hub',
     'likes',
     'moderation',

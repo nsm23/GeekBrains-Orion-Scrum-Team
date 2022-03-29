@@ -1,0 +1,24 @@
+
+{% load static %}
+<div data-post_id="{{ post.id }}"
+     class="complaint-form">
+    <div class="mt-5 mb-3">
+        <div>
+            <h5>Составить жалобу</h5>
+            <input name="title">
+            <div class="form-outline">
+                <textarea class="form-control comments-textarea"
+                          rows="4"
+                          name="text"></textarea>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <button type="button"
+                        class="btn btn-primary btn-comment-save"
+                        disabled>
+                  Отправить
+                  <i class="fas fa-long-arrow-alt-right ms-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

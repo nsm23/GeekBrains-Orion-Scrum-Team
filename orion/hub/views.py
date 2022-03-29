@@ -45,7 +45,7 @@ class MainView(ListView):
                     reduce(operator.or_, (Q(title__icontains=x) for x in self.search_keys)) |
                     reduce(operator.or_, (Q(brief_text__icontains=x) for x in self.search_keys)) |
                     reduce(operator.or_, (Q(text__icontains=x) for x in self.search_keys)) |
-                    reduce(operator.or_, (Q(user__username__icontains=x) for x in self.search_keys))
+                    reduce(operator.or_, (Q(user__username__icontains=x) for x in self.search_keys)),
                 )
             )
         else:

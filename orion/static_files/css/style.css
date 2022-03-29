@@ -31,6 +31,11 @@ body {
   transition: box-shadow 0.3s;
 }
 
+.card-text img{
+  max-width:100% !important;
+  height:auto !important;
+}
+
 .author-link {
   padding: 0 5px 0 5px;
   z-index: 2;
@@ -123,4 +128,8 @@ a.profile-link {
 
 #loginform-link{
   margin-left: 20px;
+}
+
+.complaint-form {
+  max-width: 100%;
 }

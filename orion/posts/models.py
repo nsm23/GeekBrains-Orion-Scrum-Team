@@ -22,7 +22,7 @@ class Post(models.Model):
     MIN_USER_RATING_TO_PUBLISH = 7
 
     title = models.CharField(max_length=200, verbose_name='Заголовок')
-    slug = models.SlugField(verbose_name='Элиас для урла')
+    slug = models.SlugField(verbose_name='Элиас для урла', max_length=200)
     text = models.TextField(verbose_name='Полный текст')
     brief_text = models.TextField(verbose_name='Сокращенный текст для списков')
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='posts', verbose_name='Автор')
