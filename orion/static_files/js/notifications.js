@@ -160,7 +160,7 @@ const moderationNotificationTemplate = obj => {
                 ${ text }
             </div>
             <div class="col-2 d-flex flex-column justify-content-center">
-                <a title="Прочитано" data-is-read="false" data-object-id="${ obj.object_id }" class="btn btn-sm btn-outline-secondary m-1">
+                <a title="Прочитано" data-is-read="false" data-object-id="${ obj.id }" class="btn btn-sm btn-outline-secondary m-1">
                     <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
                 <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',obj.object_id).replace('{{model}}', obj.content_type) }"

@@ -34,6 +34,7 @@ def generate_response_likes(likes, limit: int) -> List[Dict[str, Any]]:
 
 def generate_response_moderation_actions(moderation_actions, limit: int) -> List[Dict[str, Any]]:
     return [{
+        'id': mod.id,
         'object_id': mod.object_id,
         'content_type': mod.content_type.model,
         'decision': mod.decision,
