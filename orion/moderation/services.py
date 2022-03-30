@@ -2,7 +2,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model
 from django.shortcuts import get_object_or_404
 
-
 from .models import Moderation
 from notifications.models import Notification
 from notifications import services as notif_services

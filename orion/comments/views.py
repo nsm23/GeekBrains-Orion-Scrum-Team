@@ -1,11 +1,13 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
 from django.views.generic.edit import CreateView
 from django.template.loader import render_to_string
 
-from notifications.models import Notification
 from .models import Comment
 from .forms import CommentForm
+from notifications.models import Notification
+from users.permission_services import has_common_user_permission
 
 
 class JsonableResponseMixin:
@@ -63,6 +65,10 @@ class JsonableResponseMixin:
         return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
-class CommentCreateView(JsonableResponseMixin, CreateView):
+class CommentCreateView(PermissionRequiredMixin, JsonableResponseMixin, CreateView):
     model = Comment
     form_class = CommentForm
+
+    def has_permission(self):
+        return has_common_user_permission(self.request.user)
+
