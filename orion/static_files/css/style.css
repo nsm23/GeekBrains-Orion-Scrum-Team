@@ -129,3 +129,11 @@ a.profile-link {
 #loginform-link{
   margin-left: 20px;
 }
+
+.social {
+    margin-top: 14px;
+}
+
+.social-logo{
+  width: 35px;
+}

@@ -15,10 +15,12 @@
         <a class="btn btn-primary" href="{% url 'cabinet:register' %}">Registration
         </a>
     {# АУТОНТИФИКАЦИЯ С ПОМОЩЬЮ VK #}
-    <p></p>
-    <p>
-            <a class="btn btn-primary" href="{% url 'social:begin' 'vk-oauth2' %}?next=/">Enter VK account
-                {#  <img src="/static_files/img/vk.jpg" alt="VK">#}
-            </a>
-    </p>
+    <div class="social">
+        Войти с помощью:
+        <a
+           href="{% url 'social:begin' 'vk-oauth2' %}?next=/">
+            <img src="{% static '/img/VK-logo.png' %}" class="img-fluid social-logo" alt="VK">
+        </a>
+    </div>
+
 {% endblock %}
