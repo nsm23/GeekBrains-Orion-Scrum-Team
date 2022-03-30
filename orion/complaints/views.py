@@ -6,6 +6,7 @@ from django.views.generic import CreateView
 from complaints.forms import ComplaintForm
 from complaints.models import Complaint
 from notifications.models import Notification
+from posts.models import Post
 
 
 class JsonableResponseMixin:
@@ -20,8 +21,15 @@ class JsonableResponseMixin:
         form.instance.user = self.request.user
         if self.is_ajax(request=self.request) and self.request.method == "POST":
 
-            self.object = form.save()
-            target_user_id = self.object.post.user.id
+            self.object = Complaint(
+                user=self.request.user,
+                text=form.data.get('text'),
+                title=form.data.get('title'),
+                content_type=ContentType.objects.get(model='post'),
+                object_id=form.data.get('post'),
+            )
+            self.object.save()
+            target_user_id = Post.objects.get(pk=self.object.object_id).user.id
             Notification().create_notification(
                 content_type=ContentType.objects.get(model='complaint'),
                 object_id=self.object.id,
@@ -29,19 +37,9 @@ class JsonableResponseMixin:
                 target_user_id=target_user_id,
             )
 
-            context = {
-                "complaint": self.object,
-                "user": self.request.user,
-                "post": self.object.post,
-                "without_comment_form": True
-            }
-
-            html = render_to_string(f'complaints/complaint.html', context)
-
             data = {
-                'comment_id': self.object.id,
-                'html': html,
-                'status': 200
+                'status': 200,
+                'data': 'Ваша жалоба успешно принята',
             }
 
             return JsonResponse(data)

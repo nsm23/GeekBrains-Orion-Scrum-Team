@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, QuerySet
 from django.utils import dateformat, timezone
 
+from complaints.models import Complaint
 from .models import Notification
 from comments.models import Comment
 
@@ -18,6 +19,18 @@ def generate_response_comments(comments, limit: int) -> List[Dict[str, Comment]]
         'created_at': comment.created_at,
         'comment_id': comment.id,
     } for comment in comments[:limit]]
+
+
+def generate_response_complaints(complaints, limit: int) -> List[Dict[str, Complaint]]:
+    return [{
+        'user_id': complaint.user.id,
+        'username': complaint.user.username,
+        'user_avatar_url': complaint.user.avatar.url,
+        'post_id': complaint.content_object.id,
+        'text': complaint.text,
+        'title': complaint.title,
+        'comment_id': complaint.id,
+    } for complaint in complaints[:limit]]
 
 
 def generate_response_likes(likes, limit: int) -> List[Dict]:

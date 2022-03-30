@@ -264,9 +264,43 @@ function speech() {
 }
 
 
+function complaint_save() {
+  const complaint_form = $('div.complaint-form')
+  const post_id = complaint_form.data('post_id') ?? 0
+  const complaint_text = $('.complaint-textarea')
+  const complaint_title = $('.complaint-title')
+  const submit_btn = $('.btn-complaint-save')
+  const data = {
+    title: complaint_title.val(),
+    text: complaint_text.val(),
+    post: post_id,
+    csrfmiddlewaretoken: Cookies.get('csrftoken'),
+  }
+
+  $.ajax({
+    url: '/complaints/save/',
+    method: 'post',
+    data: data,
+    error: function (jqXHR, error, errorThrown) {
+        if (jqXHR.status && jqXHR.status == 400) {
+            alert(jqXHR.responseText);
+        } else {
+            alert("Something went wrong")
+        }
+    },
+    success: function (json) {
+        complaint_text.val('')
+        complaint_title.val('')
+        console.log(json, json.data)
+        alert(json.data)
+    }
+  });
+}
+
 // Подключение обработчиков
 $(function () {
     $('[data-action="like"]').click(like);
     $('[data-action="dislike"]').click(dislike);
     $('[data-action="speech"]').click(speech);
+    $('button.btn-complaint-save').click(complaint_save)
 });
