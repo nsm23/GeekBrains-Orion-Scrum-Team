@@ -7,7 +7,7 @@ def has_common_user_permission(user: User, raise_exception: bool = False) -> boo
     """
     Check if user is common active user.
     """
-    if user and user.is_active and not user.is_banned:
+    if user and user.is_authenticated and user.is_active and not user.is_banned:
         return True
     if raise_exception:
         raise PermissionDenied()

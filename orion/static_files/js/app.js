@@ -84,9 +84,13 @@ save_comment = function (elem) {
                             btn_comment_save.html('Отправить <i class="fas fa-long-arrow-alt-right ms-1"></i>')
                         }
 
-                        if (jqXHR.status && jqXHR.status == 400) {
+                        if (jqXHR.status && jqXHR.status === 400) {
                             alert(jqXHR.responseText);
-                        } else {
+                        }
+                        else if (jqXHR.status === 403) {
+                            alert("У вас недостаточно прав доступа!")
+                        }
+                        else {
                             alert("Something went wrong")
                         }
                     },
