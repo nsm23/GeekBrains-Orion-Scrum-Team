@@ -39,7 +39,6 @@ class PostDetailView(HitCountDetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
-        context.update({'popular_posts': Post.objects.order_by('-hit_count_generic__hits')[:5]})
         if self.request.user != AnonymousUser():
             try:
                 context['current_user_like'] = LikeDislike.objects.get(user=self.request.user,
