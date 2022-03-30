@@ -6,7 +6,27 @@ from likes.models import LikeDislike
 from users.models import User
 from taggit.managers import TaggableManager
 
+from taggit.models import Tag, TaggedItem
+from pytils.translit import slugify
+
 from hitcount.models import HitCount
+
+
+class RuTag(Tag):
+    class Meta:
+        proxy = True
+
+    def slugify(self, tag, i=None):
+        return slugify(self.name)
+
+
+class RuTaggedItem(TaggedItem):
+    class Meta:
+        proxy = True
+
+    @classmethod
+    def tag_model(cls):
+        return RuTag
 
 
 class Post(models.Model):
@@ -32,7 +52,7 @@ class Post(models.Model):
     modified_at = models.DateTimeField(auto_now=True, verbose_name='Дата редактирования')
     status = models.CharField(choices=ArticleStatus.choices, max_length=16, default=ArticleStatus.ACTIVE)
     votes = GenericRelation(LikeDislike, related_query_name='posts')
-    tags = TaggableManager(blank=True)
+    tags = TaggableManager(blank=True, through=RuTaggedItem)
     hit_count_generic = GenericRelation(HitCount,
                                         object_id_field='object_pk',
                                         related_query_name='hit_count_generic_relation')
