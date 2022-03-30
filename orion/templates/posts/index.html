@@ -53,6 +53,10 @@
             {% if post.status == 'ACTIVE' %}
                 {% include 'likes/likedislike.html' %}
             {% endif %}
+
+          <div class="card-footer text-muted">
+            <div class="bi bi-eye-fill">{%  get_hit_count for post %}</div>
+          </div>
         </div>
 
     {#  POST TAG LIST  #}

@@ -22,7 +22,7 @@
                 </a>
             {% endif %}
         {% endif %}
-        {% if request.user.is_superuser %}
+        {% if request.user.is_superuser and request.user != user %}
             {% if not user.is_banned %}
                 <a href="{%  url 'moderation:user_ban' user_id=user.id %}"
                    class="btn btn-outline-danger">
