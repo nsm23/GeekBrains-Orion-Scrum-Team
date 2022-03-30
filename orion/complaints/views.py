@@ -24,7 +24,6 @@ class JsonableResponseMixin:
             self.object = Complaint(
                 user=self.request.user,
                 text=form.data.get('text'),
-                title=form.data.get('title'),
                 content_type=ContentType.objects.get(model='post'),
                 object_id=form.data.get('post'),
             )

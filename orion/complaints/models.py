@@ -9,7 +9,6 @@ class Complaint(models.Model):
 
     user = models.ForeignKey(User, verbose_name='user', on_delete=models.CASCADE)
     text = models.CharField(max_length=512)
-    title = models.CharField(max_length=128)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()

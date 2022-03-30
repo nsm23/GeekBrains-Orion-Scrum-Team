@@ -272,10 +272,8 @@ function complaint_save() {
   const complaint_form = $('div.complaint-form')
   const post_id = complaint_form.data('post_id') ?? 0
   const complaint_text = $('.complaint-textarea')
-  const complaint_title = $('.complaint-title')
   const submit_btn = $('.btn-complaint-save')
   const data = {
-    title: complaint_title.val(),
     text: complaint_text.val(),
     post: post_id,
     csrfmiddlewaretoken: Cookies.get('csrftoken'),
@@ -301,10 +299,27 @@ function complaint_save() {
   });
 }
 
+function complaint_toggle() {
+  $('button.complaint-toggle').remove()
+  $('.complaint-form').css('display', 'block')
+}
+
+validate_complaint_text = function() {
+    var complaint_text = $('.complaint-textarea').val() ?? ''
+
+    var invalid = false
+    if ($.trim(complaint_text) == '') {
+        invalid = true
+    }
+    $('.btn-complaint-save').attr('disabled', invalid)
+}
+
 // Подключение обработчиков
 $(function () {
     $('[data-action="like"]').click(like);
     $('[data-action="dislike"]').click(dislike);
     $('[data-action="speech"]').click(speech);
-    $('button.btn-complaint-save').click(complaint_save)
+    $('button.complaint-toggle').click(complaint_toggle);
+    $('button.btn-complaint-save').click(complaint_save);
+    $('.complaint-textarea').bind('input propertychange', validate_complaint_text)
 });

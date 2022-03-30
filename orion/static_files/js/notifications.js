@@ -141,7 +141,7 @@ const moderationNotificationTemplate = obj => {
     if (obj.content_type === "post") {
         if (obj.decision === "APPROVE") {
             icon = "<i class=\"bi bi-check-lg\"></i>";
-            text = `Ваща публикация "${obj.text}" была одобрена.`;
+            text = `Ваша публикация "${obj.text}" была одобрена.`;
             className = "text-success";
         }
         else if (obj.decision === "DECLINE") {

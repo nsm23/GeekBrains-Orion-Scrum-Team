@@ -5,4 +5,4 @@ from complaints.models import Complaint
 class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
-        fields = ['text', 'title', ]
+        fields = ['text']
