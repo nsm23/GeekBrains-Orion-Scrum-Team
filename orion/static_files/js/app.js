@@ -292,14 +292,24 @@ function complaint_save() {
     },
     success: function (json) {
         complaint_text.val('')
-        alert(json.data)
+        const success_message = $(`
+          <div class="alert alert-success complaint-success" role="alert">
+            Ваша жалоба успешно принята
+          </div>
+        `)
+        $('.complaint-container').append(success_message)
+        $('button.complaint-toggle').css('display', 'block')
+        $('.complaint-form').css('display', 'none')
     }
   });
 }
 
 function complaint_toggle() {
-  $('button.complaint-toggle').remove()
+  $('button.complaint-toggle').css('display', 'none')
   $('.complaint-form').css('display', 'block')
+  if ($('.complaint-success').length){
+    $('.complaint-success').remove()
+  }
 }
 
 validate_complaint_text = function() {
