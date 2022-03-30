@@ -23,7 +23,6 @@ const markNotificationReadFetch = ids => {
 
 
 const markNotificationRead = event => {
-    console.log('event: ', event)
     let a = event.target.closest("a");
     if (a.dataset.isRead === "false") {
         return markNotificationReadFetch([a.dataset.objectId])
@@ -315,16 +314,15 @@ const complaintNotificationTemplate = complaint => {
                 <a href="${ USER_PROFILE_URL.replace('{{id}}', complaint.user_id) }" class="text-dark">
                     @${ complaint.username }</a>
                 <div>${ complaint.text }</div>
-                <div>${ complaint.title }</div>
             </div>
             <div class="col-2 d-flex flex-column justify-content-center">
                 <a title="Отметить как прочитано" class="btn btn-sm btn-outline-secondary m-1"
                     data-is-read="false" data-object-id="${ complaint.complaint_id }">
                         <i class="bi bi-check-circle-fill mark-as-read" style="font-size: 1rem"></i>
                 </a>
-                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',complaint.complaint_id).replace('{{model}}', 'complaint') }"
+                <a href="${ NOTIFICATION_SET_READ_AND_REDIRECT_URL.replace('{{id}}',complaint.post_id).replace('{{model}}', 'complaint') }"
                     class="btn btn-sm btn-outline-secondary m-1"
-                    title="Перейти к жалобе">
+                    title="Перейти к статье">
                         <i class="bi bi-box-arrow-up-right" style="font-size: 1rem"></i>
                 </a>
             </div>

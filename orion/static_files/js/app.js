@@ -292,8 +292,6 @@ function complaint_save() {
     },
     success: function (json) {
         complaint_text.val('')
-        complaint_title.val('')
-        console.log(json, json.data)
         alert(json.data)
     }
   });

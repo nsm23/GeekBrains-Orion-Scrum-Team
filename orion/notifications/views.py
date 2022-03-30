@@ -88,7 +88,7 @@ def mark_as_read_and_redirect(request, object_id, object_model):
     if object_model == 'likedislike':
         like = get_object_or_404(LikeDislike, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': like.content_object.slug}))
-    if object_model == 'post':
+    if object_model in ['post', 'complaint']:
         post = get_object_or_404(Post, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': post.slug}))
     raise Http404

@@ -28,7 +28,7 @@ class MainView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if hasattr(self, 'search_keys'):
+        if self.search_keys:
             search_fields = ', '.join(self.search_keys)
             context['search_field'] = search_fields
             context['page_title'] = 'Поиск по ключевым словам' + search_fields
@@ -44,8 +44,7 @@ class MainView(ListView):
                 Q(status=Post.ArticleStatus.ACTIVE) & (
                     reduce(operator.or_, (Q(title__icontains=x) for x in self.search_keys)) |
                     reduce(operator.or_, (Q(brief_text__icontains=x) for x in self.search_keys)) |
-                    reduce(operator.or_, (Q(text__icontains=x) for x in self.search_keys)) |
-                    reduce(operator.or_, (Q(user__username__icontains=x) for x in self.search_keys)),
+                    reduce(operator.or_, (Q(text__icontains=x) for x in self.search_keys)),
                 )
             )
         else:

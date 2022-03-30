@@ -135,14 +135,14 @@ a.profile-link {
   margin-left: 20px;
 }
 
-
 .complaint-form {
   max-width: 100%;
+}
 
 .social {
     margin-top: 14px;
 }
 
 .social-logo {
-  width: 35px !important;
+  width: 35px;
 }
