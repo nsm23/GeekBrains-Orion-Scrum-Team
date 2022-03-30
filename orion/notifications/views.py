@@ -61,7 +61,7 @@ def get_notifications(request):
         'likes': response_likes,
         'moderation_acts': response_moderation_actions,
         'complaints': response_complaints,
-        'notifications_count': len(comments) + len(likes) + len(moderation_actions),
+        'notifications_count': len(comments) + len(likes) + len(moderation_actions) + len(complaints),
         'current_user_id': request.user.id
     }, **response_notifications))
 

@@ -28,7 +28,7 @@ def generate_response_complaints(complaints, limit: int) -> List[Dict[str, Compl
         'user_avatar_url': complaint.user.avatar.url,
         'post_id': complaint.content_object.id,
         'text': complaint.text,
-        'comment_id': complaint.id,
+        'complaint_id': complaint.id,
     } for complaint in complaints[:limit]]
 
 
