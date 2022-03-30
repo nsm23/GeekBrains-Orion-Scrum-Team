@@ -1,4 +1,5 @@
-from typing import Dict, List, Type, Union
+from typing import Any, Dict, List, Type, Union
+from datetime import datetime
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, QuerySet
@@ -6,17 +7,16 @@ from django.utils import dateformat, timezone
 
 from complaints.models import Complaint
 from .models import Notification
-from comments.models import Comment
 
 
-def generate_response_comments(comments, limit: int) -> List[Dict[str, Comment]]:
+def generate_response_comments(comments, limit: int) -> List[Dict[str, Any]]:
     return [{
         'user_id': comment.user.id,
         'username': comment.user.username,
         'user_avatar_url': comment.user.avatar.url,
         'post_id': comment.post.id,
         'text': comment.text,
-        'created_at': comment.created_at,
+        'created_at': format_datetime_with_system_timezone(comment.created_at, 'd.m.Y H:i'),
         'comment_id': comment.id,
     } for comment in comments[:limit]]
 
@@ -33,7 +33,7 @@ def generate_response_complaints(complaints, limit: int) -> List[Dict[str, Compl
     } for complaint in complaints[:limit]]
 
 
-def generate_response_likes(likes, limit: int) -> List[Dict]:
+def generate_response_likes(likes, limit: int) -> List[Dict[str, Any]]:
     return [{
         'user_id': like.user.id,
         'username': like.user.username,
@@ -45,17 +45,17 @@ def generate_response_likes(likes, limit: int) -> List[Dict]:
     } for like in likes[:limit]]
 
 
-def generate_response_moderation_actions(moderation_actions, limit: int):
+def generate_response_moderation_actions(moderation_actions, limit: int) -> List[Dict[str, Any]]:
     return [{
-            'object_id': mod.object_id,
-            'content_type': mod.content_type.model,
-            'decision': mod.decision,
-            'comment': mod.comment,
-            'text': mod.content_object.title if mod.content_type.model == 'post' else '',
-        } for mod in moderation_actions[:limit]]
+        'object_id': mod.object_id,
+        'content_type': mod.content_type.model,
+        'decision': mod.decision,
+        'comment': mod.comment,
+        'text': mod.content_object.title if mod.content_type.model == 'post' else '',
+    } for mod in moderation_actions[:limit]]
 
 
-def generate_response_posts(posts, limit: int):
+def generate_response_posts(posts, limit: int) -> List[Dict[str, Any]]:
     return [{
         'post_id': post.id,
         'post_slug': post.slug,
@@ -89,8 +89,9 @@ def get_unread_post_notifications(post_id: int) -> QuerySet:
         status=Notification.NotificationStatus.UNREAD,
     )
 
-def format_datetime_with_system_timezone(datetime, format):
+
+def format_datetime_with_system_timezone(dt: datetime, dt_format: str) -> str:
     return dateformat.format(
-        value=timezone.localtime(datetime, timezone.get_current_timezone()),
-        format_string=format,
+        value=timezone.localtime(dt, timezone.get_current_timezone()),
+        format_string=dt_format,
     )

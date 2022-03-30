@@ -20,6 +20,7 @@ from likes.models import LikeDislike
 from notifications.models import Notification
 from posts.models import Post
 from complaints.models import Complaint
+from users.permission_services import has_common_user_permission
 
 
 class PostDetailView(HitCountDetailView):
@@ -52,7 +53,7 @@ class PostDetailView(HitCountDetailView):
         return context
 
 
-class PostCreateView(CreateView):
+class PostCreateView(PermissionRequiredMixin, CreateView):
     model = Post
     template_name = 'posts/post_form.html'
     fields = ['title', 'brief_text', 'text', 'image', 'hub', 'tags']
@@ -87,6 +88,9 @@ class PostCreateView(CreateView):
             )
         return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
 
+    def has_permission(self):
+        return has_common_user_permission(self.request.user)
+
 
 # ToDo: check, if post was declined previously !
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
@@ -98,10 +102,7 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
         if self.request.user.is_anonymous:
             return False
         post = Post.objects.get(slug=self.kwargs.get('slug'))
-        if self.request.user.pk != post.user.pk and not self.request.user.is_superuser:
-            self.raise_exception = True
-            return False
-        return True
+        return self.request.user.pk == post.user.pk and has_common_user_permission(self.request.user)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
