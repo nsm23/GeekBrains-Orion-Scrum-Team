@@ -7,9 +7,6 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.storage import FileSystemStorage
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.utils import timezone
-from django.views import View
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
 
@@ -17,10 +14,13 @@ from gtts import gTTS
 from hitcount.views import HitCountDetailView
 from pytils.translit import slugify
 
+from complaints.forms import ComplaintForm
 from hub.models import Hub
 from likes.models import LikeDislike
 from notifications.models import Notification
 from posts.models import Post
+from complaints.models import Complaint
+from users.permission_services import has_common_user_permission
 
 
 class PostDetailView(HitCountDetailView):
@@ -41,6 +41,7 @@ class PostDetailView(HitCountDetailView):
         context = super().get_context_data(**kwargs)
         context['comments_list'] = self.object.comments.filter(active=True, parent__isnull=True)
         context['likes_count'] = self.object.votes.sum_rating()
+        context['complaint_form'] = ComplaintForm
         context.update({'popular_posts': Post.objects.order_by('-hit_count_generic__hits')[:5]})
         if self.request.user != AnonymousUser():
             try:
@@ -52,8 +53,7 @@ class PostDetailView(HitCountDetailView):
         return context
 
 
-
-class PostCreateView(CreateView):
+class PostCreateView(PermissionRequiredMixin, CreateView):
     model = Post
     template_name = 'posts/post_form.html'
     fields = ['title', 'brief_text', 'text', 'image', 'hub', 'tags']
@@ -61,7 +61,7 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         publish = 'publish' in self.request.POST
-        if publish and self.request.user.rating >= Post.MIN_USER_RATING_TO_PUBLISH:
+        if publish and self.request.user.rating >= Post.MIN_USER_RATING_TO_PUBLISH or self.request.user.is_staff:
             action = 'publish'
             self.object.status = Post.ArticleStatus.ACTIVE
             redirect_name, section = 'main', None
@@ -75,12 +75,8 @@ class PostCreateView(CreateView):
             redirect_name, section = 'cabinet:user_profile', 'user_drafts'
         self.object.slug = slugify(self.object.title + str(self.object.id))
         self.object.user = self.request.user
-        if 'image' in self.request:
-            post_image = self.request.FILES['image']
-            fs = FileSystemStorage()
-            fs.save(post_image.name, post_image)
-
         self.object.save()
+
         if action == 'publish':
             return HttpResponseRedirect(reverse('main'))
         if action == 'moderation':
@@ -91,6 +87,9 @@ class PostCreateView(CreateView):
                 target_user_id=None,
             )
         return HttpResponseRedirect(reverse(redirect_name, kwargs={'pk': self.request.user.id, 'section': section}))
+
+    def has_permission(self):
+        return has_common_user_permission(self.request.user)
 
 
 # ToDo: check, if post was declined previously !
@@ -103,10 +102,7 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
         if self.request.user.is_anonymous:
             return False
         post = Post.objects.get(slug=self.kwargs.get('slug'))
-        if self.request.user.pk != post.user.pk and not self.request.user.is_superuser:
-            self.raise_exception = True
-            return False
-        return True
+        return self.request.user.pk == post.user.pk and has_common_user_permission(self.request.user)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -116,14 +112,18 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
         self.object.brief_text = request.POST['brief_text']
         self.object.text = request.POST['text']
         publish = 'publish' in request.POST
-        self.object.status = Post.ArticleStatus.ACTIVE if publish else Post.ArticleStatus.DRAFT
+        if not publish:
+            self.object.status = Post.ArticleStatus.DRAFT
+
         self.object.slug = slugify(self.object.title + str(self.object.id))
-        if 'image' in request:
+        if 'image' in request.FILES:
             post_image = request.FILES['image']
             fs = FileSystemStorage()
             fs.save(post_image.name, post_image)
+            self.object.image = post_image.name
 
         self.object.save()
+
         if publish:
             return HttpResponseRedirect(reverse('main'))
         return HttpResponseRedirect(reverse('cabinet:user_profile',

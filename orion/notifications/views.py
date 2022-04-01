@@ -6,13 +6,18 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse, reverse_lazy
 
+from complaints.models import Complaint
+from .services import (get_notifying_object, generate_response_comments, generate_response_likes,
+                       generate_response_moderation_actions, generate_response_posts, generate_response_complaints)
 from comments.models import Comment
 from likes.models import LikeDislike
 from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
+from users import permission_services
 
 COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW = 3
+COMPLAINT_NOTIFICATIONS_NUMBER_TO_SHOW = 3
 LIKES_NOTIFICATIONS_NUMBER_TO_SHOW = 3
 POST_TO_MODERATOR_NUMBER_TO_SHOW = 3
 POST_MODERATION_RESULT_NUMBER_TO_SHOW = 3
@@ -24,67 +29,39 @@ def get_notifications(request):
         target_user=request.user,
         status=Notification.NotificationStatus.UNREAD,
     )
-    comment_ids = notifications.filter(content_type__model='comment').values_list('object_id')
-    likes_ids = notifications.filter(content_type__model='likedislike').values_list('object_id')
-    moderation_ids = notifications.filter(content_type__model='moderation').values_list('object_id')
 
-    comments = Comment.objects.filter(id__in=comment_ids).order_by('-modified_at')
-    likes = LikeDislike.objects.filter(id__in=likes_ids)
-    moderation_acts = Moderation.objects.filter(id__in=moderation_ids).order_by('-date')
+    comments = get_notifying_object(notifications, Comment, '-modified_at')
+    likes = get_notifying_object(notifications, LikeDislike)
+    moderation_actions = get_notifying_object(notifications, Moderation, '-date')
+    complaints = get_notifying_object(notifications, Complaint)
 
     response_notifications = {}
-    if request.user.is_staff:
+    if permission_services.has_moderator_permissions(request.user):
         post_ids = Notification.objects.filter(
             target_user__isnull=True,
             status=Notification.NotificationStatus.UNREAD,
             content_type__model='post',
         ).values_list('object_id')
         posts_to_moderate = Post.objects.filter(id__in=post_ids)
-        response_posts_to_moderate = [{
-            'post_id': post.id,
-            'post_slug': post.slug,
-            'post_title': post.title,
-            'post_user_id': post.user.id,
-            'username': post.user.username,
-            'user_avatar_url': post.user.avatar.url,
-        } for post in posts_to_moderate[:POST_TO_MODERATOR_NUMBER_TO_SHOW]]
+        response_posts_to_moderate = generate_response_posts(posts_to_moderate,
+                                                             POST_TO_MODERATOR_NUMBER_TO_SHOW)
         response_notifications = {
             'posts_to_moderate': response_posts_to_moderate,
             'posts_to_moderate_count': len(post_ids)
         }
 
-    response_comments = [{
-            'user_id': comment.user.id,
-            'username': comment.user.username,
-            'user_avatar_url': comment.user.avatar.url,
-            'post_id': comment.post.id,
-            'text': comment.text,
-            'created_at': comment.created_at,
-            'comment_id': comment.id,
-        } for comment in comments[:COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW]
-    ]
-    response_likes = [{
-            'user_id': like.user.id,
-            'username': like.user.username,
-            'user_avatar_url': like.user.avatar.url,
-            'like_id': like.id,
-            'vote': like.vote,
-            'post_id': like.object_id,
-            'post_title': like.content_object.title,
-        } for like in likes[:LIKES_NOTIFICATIONS_NUMBER_TO_SHOW]
-    ]
-    response_moderations = [{
-            'object_id': mod.object_id,
-            'content_type': mod.content_type.model,
-            'decision': mod.decision,
-            'comment': mod.comment,
-            'text': mod.content_object.title if mod.content_type.model == 'post' else '',
-        } for mod in moderation_acts[:POST_TO_MODERATOR_NUMBER_TO_SHOW]]
+    response_comments = generate_response_comments(comments, COMMENT_NOTIFICATIONS_NUMBER_TO_SHOW)
+    response_likes = generate_response_likes(likes, LIKES_NOTIFICATIONS_NUMBER_TO_SHOW)
+    response_moderation_actions = generate_response_moderation_actions(moderation_actions,
+                                                                       POST_TO_MODERATOR_NUMBER_TO_SHOW)
+    response_complaints = generate_response_complaints(complaints, COMPLAINT_NOTIFICATIONS_NUMBER_TO_SHOW)
+
     return JsonResponse(dict({
         'comments': response_comments,
         'likes': response_likes,
-        'moderation_acts': response_moderations,
-        'notifications_count': len(comments) + len(likes) + len(moderation_acts),
+        'moderation_acts': response_moderation_actions,
+        'complaints': response_complaints,
+        'notifications_count': len(comments) + len(likes) + len(moderation_actions) + len(complaints),
         'current_user_id': request.user.id
     }, **response_notifications))
 
@@ -111,7 +88,7 @@ def mark_as_read_and_redirect(request, object_id, object_model):
     if object_model == 'likedislike':
         like = get_object_or_404(LikeDislike, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': like.content_object.slug}))
-    if object_model == 'post':
+    if object_model in ['post', 'complaint']:
         post = get_object_or_404(Post, pk=object_id)
         return redirect(reverse('posts:detail', kwargs={'slug': post.slug}))
     raise Http404

@@ -1,6 +1,7 @@
-<h2 class="mb-3">{{ subtitle }}</h2>
-{% for post in posts %}
-    <ul class="list-group list-group-flush px-0">
+{% include "users/user_profile_posts_navbar.html" %}
+
+<ul class="list-group list-group-flush px-0">
+    {% for post in posts %}
         <li class="list-group-item d-flex justify-content-between px-0">
             <div class="col-9">
                 <a href="{% url "posts:detail" slug=post.slug %}" class="link-secondary">{{ post.title }}</a>
@@ -14,5 +15,5 @@
                 {% endif %}
             </div>
         </li>
-    </ul>
-{% endfor %}
+    {% endfor %}
+</ul>

@@ -1,40 +1,28 @@
 from django.contrib import auth
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from comments.models import Comment
+from complaints.models import Complaint
 from likes.models import LikeDislike
 from moderation.models import Moderation
 from notifications.models import Notification
 from posts.models import Post
 from users.models import User
-from users.forms import UserForm, RegisterForm, LoginForm
+from users.forms import UserForm, RegisterForm
+from users.permission_services import has_common_user_permission
 
 
-def login(request):
-    if request.method == 'POST':
-        form_login = LoginForm(data=request.POST)
-
-        if form_login.is_valid():
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-                return HttpResponseRedirect(reverse_lazy('main'))
-            else:
-                return HttpResponse('Disabled account')
-    else:
-        form_login = LoginForm()
-
-    context = {
-        'form_login': form_login,
-    }
-    return render(request, 'users/user_login.html', context)
+class UserLoginView(LoginView):
+    template_name = 'users/user_login.html'
+    form_class = AuthenticationForm
+    next_page = reverse_lazy('main')
 
 
 def register(request):
@@ -66,10 +54,7 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         user = kwargs.get('object')
-        section = self.kwargs.get('section')
-        if not section:
-            section = 'user_detail'
-
+        section = self.kwargs.get('section', 'user_detail')
         if section == 'user_posts':
             kwargs['posts'] = user.posts.filter(status=Post.ArticleStatus.ACTIVE)
         elif section == 'user_drafts':
@@ -84,6 +69,21 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
 
             decline_reasons = {m.object_id: m.comment for m in moderations}
             kwargs['posts'] = [{'object': post, 'decline_reason': decline_reasons.get(post.id)} for post in posts]
+
+        elif section == 'user_complaint_notifications':
+            read_complaints = Notification.objects.filter(
+                target_user=user,
+                content_type__model='complaint',
+                status=Notification.NotificationStatus.READ,
+            )
+            unread_complaints = Notification.objects.filter(
+                target_user=user,
+                content_type__model='complaint',
+                status=Notification.NotificationStatus.UNREAD,
+            )
+
+            kwargs['read_complaints'] = Complaint.objects.filter(id__in=[el.object_id for el in read_complaints])
+            kwargs['unread_complaints'] = Complaint.objects.filter(id__in=[el.object_id for el in unread_complaints])
 
         elif section == 'user_comment_notifications':
             notifications = Notification.objects.filter(target_user=user)
@@ -118,14 +118,10 @@ class UserProfileView(PermissionRequiredMixin, DetailView):
         return super().get_context_data(**kwargs)
 
     def has_permission(self):
-        section = self.kwargs.get("section")
-        if section not in self.INSECURE_SECTIONS:
-            if self.request.user.is_anonymous:
-                return False
-            if self.request.user.pk != self.kwargs['pk'] and not self.request.user.is_superuser:
-                self.raise_exception = True
-                return False
-        return True
+        section = self.kwargs.get('section', 'user_detail')
+        if section in self.INSECURE_SECTIONS:
+            return True
+        return has_common_user_permission(self.request.user) and self.request.user.pk == self.kwargs["pk"]
 
 
 class UserUpdateView(PermissionRequiredMixin, UpdateView):

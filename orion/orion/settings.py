@@ -16,12 +16,10 @@ APP_ROOT = os.path.join(os.path.dirname(__file__), '')
 dotenv_path = os.path.join(APP_ROOT, '../.env')
 dotenv.load_dotenv(dotenv_path)
 
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -38,7 +36,6 @@ ALLOWED_HOSTS = [
     'localhost'
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,15 +49,17 @@ INSTALLED_APPS = [
 
     'crispy_forms',
     'crispy_bootstrap5',
+    'taggit',
     'tinymce',
     'hitcount',
+    'social_django',
 
     'comments',
+    'complaints',
     'hub',
     'likes',
     'moderation',
     'notifications',
-    'taggit',
     'posts',
     'users',
 ]
@@ -102,26 +101,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'orion.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_NAME'),
-            'USER': os.getenv('POSTGRES_USER'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('POSTGRES_HOST'),
-            'PORT': os.getenv('POSTGRES_PORT'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_NAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
     }
 }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 
 # Password validation
@@ -142,13 +134,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_L10N = False
 DATE_FORMAT = '%Y-%m-%d'
@@ -180,3 +171,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TINYMCE_JS_URL = os.path.join("tinymce/tinymce.min.js")
 TINYMCE_JS_ROOT = os.path.join(STATIC_ROOT, "tinymce")
 TINYMCE_SPELLCHECKER = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
+
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = [
+    'email',
+    'user_photo',
+]
