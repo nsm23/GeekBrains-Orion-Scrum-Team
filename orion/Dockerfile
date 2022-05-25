@@ -12,3 +12,4 @@ COPY . /usr/src/orion/
 RUN pip install --upgrade pip
 # COPY ./requirements.txt .
 RUN pip install -r ./requirements.txt
+#CMD ['python', 'manage.py, 'runserver' '127.0.0.1:8000]
