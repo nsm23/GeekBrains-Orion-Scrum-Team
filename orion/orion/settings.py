@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'tinymce',
     'hitcount',
     'social_django',
+    'transliterate',
 
     'comments',
     'complaints',

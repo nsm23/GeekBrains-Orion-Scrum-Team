@@ -3,6 +3,7 @@ from functools import reduce
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from django.db.models import Q
+from transliterate import translit
 
 from posts.models import Post
 from hub.models import Hub
@@ -40,6 +41,7 @@ class MainView(ListView):
         search_string = self.request.GET.get('search')
         if search_string:
             self.search_keys = search_string.strip().split()
+            translit(self.search_keys, reversed=True)
             return Post.objects.filter(
                 Q(status=Post.ArticleStatus.ACTIVE) & (
                     reduce(operator.or_, (Q(title__icontains=x) for x in self.search_keys)) |
